@@ -3,7 +3,7 @@ package reading_tracker.reading_tracker;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "reading_tracker")
 public class ReadingTrackerApplication {
 
 	public static void main(String[] args) {

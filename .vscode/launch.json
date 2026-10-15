@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-ReadingTrackerApplication<reading_tracker>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "reading_tracker.reading_tracker.ReadingTrackerApplication",
+            "projectName": "reading_tracker",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
