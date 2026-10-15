@@ -13,6 +13,6 @@ public class TrackerController {
     
     @GetMapping("/tracker")
     public String main_page() {
-        return "Tracker.html";
+        return "Tracker";
     }
 }
