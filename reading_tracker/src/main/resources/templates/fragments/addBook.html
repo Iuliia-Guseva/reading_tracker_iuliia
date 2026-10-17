@@ -1,0 +1,95 @@
+//modal window or model box
+<th:block th:fragment="addBookModal">
+    <dialog id="add-book-modal" aria-labelledby="add-book-title">
+        <button type="button" aria-label="Back to my books"
+                onclick="document.getElementById('add-book-modal').close()">&#8592; Back</button>
+
+        <section class="book-preview" aria-label="Book preview">
+            <div class="cover-placeholder" aria-hidden="true">Book cover</div>
+            <div class="preview-details">
+                <h2 id="add-book-title"><span id="preview-title">Book title</span></h2>
+                <p id="preview-author">Author</p>
+                <p>Status: <span id="preview-status">To read</span></p>
+                <p><span id="preview-pages">0</span> pages</p>
+                <p>Publication year: <span id="preview-year">Not set</span></p>
+            </div>
+        </section>
+
+        <hr>
+
+        <form class="book-form" th:action="@{/my-books}" th:object="${newBook}" method="post">
+            <h2 id="book-form-heading">Book details</h2>
+
+            <label class="field full-width" for="book-title">
+                Title
+                <input id="book-title" type="text" th:field="*{title}" placeholder="Enter the book title" required>
+            </label>
+
+            <label class="field full-width" for="book-author">
+                Author
+                <input id="book-author" type="text" th:field="*{author}" placeholder="Enter the author's name">
+            </label>
+
+            <label class="field" for="book-pages">
+                Pages
+                <input id="book-pages" type="number" min="1" th:field="*{pages}" placeholder="Number of pages">
+            </label>
+
+            <label class="field" for="book-year">
+                Publication year
+                <input id="book-year" type="number" min="1" th:field="*{publicationYear}" placeholder="Year">
+            </label>
+
+            <label class="field" for="book-status">
+                Status
+                <select id="book-status" th:field="*{status}">
+                    <option th:each="status : ${bookStatuses}" th:value="${status}"
+                            th:text="${#strings.replace(status.name(), '_', ' ')}">To read</option>
+                </select>
+            </label>
+
+            <div class="modal-actions">
+                <button type="button"
+                        onclick="document.getElementById('add-book-modal').close()">Cancel</button>
+                <button type="submit">Save book</button>
+            </div>
+        </form>
+    </dialog>
+
+    <script>
+        const addBookModal = document.getElementById("add-book-modal");
+        document.getElementById("open-add-book").addEventListener("click", () => {
+            addBookModal.showModal();
+        });
+
+        const previewFields = [
+            ["book-title", "preview-title", "Book title"],
+            ["book-author", "preview-author", "Author"],
+            ["book-pages", "preview-pages", "0"],
+            ["book-year", "preview-year", "Not set"]
+        ];
+        previewFields.forEach(([inputId, previewId, emptyText]) => {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+            const updatePreview = () => {
+                preview.textContent = input.value || emptyText;
+            };
+            input.addEventListener("input", updatePreview);
+            updatePreview();
+        });
+
+        const statusSelect = document.getElementById("book-status");
+        const statusPreview = document.getElementById("preview-status");
+        const updateStatusPreview = () => {
+            statusPreview.textContent = statusSelect.options[statusSelect.selectedIndex].text;
+        };
+        statusSelect.addEventListener("change", updateStatusPreview);
+        updateStatusPreview();
+
+        addBookModal.addEventListener("click", (event) => {
+            if (event.target === addBookModal) {
+                addBookModal.close();
+            }
+        });
+    </script>
+</th:block>

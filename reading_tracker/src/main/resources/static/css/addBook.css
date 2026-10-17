@@ -1,0 +1,91 @@
+#add-book-modal {
+    position: fixed;
+    inset: 0 0 0 auto;
+    box-sizing: border-box;
+    width: min(680px, 96vw);
+    height: 100vh;
+    max-height: 100vh;
+    margin: 0;
+    overflow-y: auto;
+    padding: 1.5rem;
+}
+
+.book-preview {
+    display: grid;
+    grid-template-columns: minmax(120px, 0.7fr) 1.3fr;
+    gap: 1.5rem;
+    align-items: start;
+    padding: 1.5rem 0;
+}
+
+.cover-placeholder {
+    display: grid;
+    min-height: 260px;
+    place-items: center;
+    border: 1px solid;
+    border-radius: 0.75rem;
+    text-align: center;
+}
+
+.preview-details p {
+    margin: 0.75rem 0;
+}
+
+.book-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 1.5rem;
+}
+
+.book-form h2,
+.book-form .full-width,
+.modal-actions {
+    grid-column: 1 / -1;
+}
+
+.book-form h2 {
+    margin: 1.5rem 0 0;
+}
+
+.field {
+    display: grid;
+    gap: 0.4rem;
+}
+
+.field input,
+.field select {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.65rem;
+    border: 1px solid;
+    border-radius: 0.6rem;
+    background: transparent;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.modal-actions button {
+    flex: 1;
+    min-height: 3.25rem;
+}
+
+@media (max-width: 520px) {
+    #add-book-modal {
+        width: 100vw;
+        padding: 1rem;
+    }
+
+    .book-preview {
+        grid-template-columns: 1fr 1.2fr;
+        gap: 1rem;
+    }
+
+    .cover-placeholder {
+        min-height: 190px;
+    }
+}

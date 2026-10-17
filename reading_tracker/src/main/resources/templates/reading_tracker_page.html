@@ -17,5 +17,13 @@
     </thead>
     <h3>Currently reading</h3>
     <h3>My Books</h3>
+    <p><a th:href="@{/my-books}">View my books</a></p>
+    <ul>
+        <li th:each="book : ${books}">
+            <span th:text="${book.title}">Book title</span>
+            <span th:if="${book.author}" th:text="|by ${book.author}|">by Author</span>
+        </li>
+    </ul>
+    <p th:if="${#lists.isEmpty(books)}">No books added yet.</p>
 </body>
 </html>

@@ -13,6 +13,7 @@ public class Category {
     private Long id;
     private String name;
 
+    @OneToMany
     private List<Book> books;
 
     //create a null object so Spring can create an empty form
