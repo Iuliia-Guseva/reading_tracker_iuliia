@@ -4,18 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Books</title>
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
     <link rel="stylesheet" th:href="@{/css/addBook.css}">
 </head>
 <body>
-    <h1>My Books</h1>
-    <button id="open-add-book" type="button">Add book</button>
-    <ul class="book-list">
-        <li th:each="book : ${books}">
-            <span th:text="${book.title}">Book title</span>
-            <span th:if="${book.author}" th:text="|by ${book.author}|">by Author</span>
-        </li>
-    </ul>
-    <p th:if="${#lists.isEmpty(books)}">No books added yet.</p>
+    <div class="page-layout">
+        <div th:replace="~{fragments/Navigation :: NavigationModal('books')}"></div>
+        <main class="page-content">
+            <h1>My Books</h1>
+            <button id="open-add-book" type="button">Add book</button>
+            <ul class="book-list">
+                <li th:each="book : ${books}">
+                    <span th:text="${book.title}">Book title</span>
+                    <span th:if="${book.author}" th:text="|by ${book.author}|">by Author</span>
+                </li>
+            </ul>
+            <p th:if="${#lists.isEmpty(books)}">No books added yet.</p>
+        </main>
+    </div>
 
     <div th:replace="~{fragments/addBook :: addBookModal}"></div>
 </body>

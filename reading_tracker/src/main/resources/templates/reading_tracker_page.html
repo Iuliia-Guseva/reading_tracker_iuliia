@@ -4,26 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reading Tracker</title>
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
 </head>
 <body>
-    <h1>Hello, user!</h1>
-    <h4>What will you read today?</h4>
-    <thead>
-        <tr>
-            <th>Total Books</th>
-            <th>Reading Time</th>
-            <th>Books this year</th>
-        </tr>
-    </thead>
-    <h3>Currently reading</h3>
-    <h3>My Books</h3>
-    <p><a th:href="@{/my-books}">View my books</a></p>
-    <ul>
-        <li th:each="book : ${books}">
-            <span th:text="${book.title}">Book title</span>
-            <span th:if="${book.author}" th:text="|by ${book.author}|">by Author</span>
-        </li>
-    </ul>
-    <p th:if="${#lists.isEmpty(books)}">No books added yet.</p>
+    <div class="page-layout">
+        <div th:replace="~{fragments/Navigation :: NavigationModal('home')}"></div>
+        <main class="page-content">
+            <h1>Hello, user!</h1>
+            <h4>What will you read today?</h4>
+            <thead>
+                <tr>
+                    <th>Total Books</th>
+                    <th>Reading Time</th>
+                    <th>Books this year</th>
+                </tr>
+            </thead>
+            <h3>Currently reading</h3>
+            <h3>My Books</h3>
+            <p><a th:href="@{/my-books}">View my books</a></p>
+            <ul>
+                <li th:each="book : ${books}">
+                    <span th:text="${book.title}">Book title</span>
+                    <span th:if="${book.author}" th:text="|by ${book.author}|">by Author</span>
+                </li>
+            </ul>
+            <p th:if="${#lists.isEmpty(books)}">No books added yet.</p>
+        </main>
+    </div>
 </body>
 </html>

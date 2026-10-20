@@ -1,0 +1,60 @@
+<!-- Modal window or model box for adding a new book -->
+<!-- material used - https://www.w3schools.com/howto/howto_css_modals.asp -->
+<th:block th:fragment="NavigationModal(activePage)">
+    <aside class="navigation-panel" aria-label="Main navigation">
+        <!-- Clicking the logo returns to the tracker home page. -->
+        <a class="navigation-brand" th:href="@{/tracker}">
+        <!-- SVG path used to draw the icon -->
+            <svg class="navigation-brand-icon" viewBox="0 0 32 32" aria-hidden="true">
+                <path d="M16 27V14m0 6c-7 0-10-4-10-10 6 0 10 3 10 10Zm0-5c0-6 3-10 10-10 0 6-4 10-10 10ZM10 28h12"/>
+            </svg>
+            <span>Reading Tracker</span>
+        </a>
+
+        <nav class="navigation-links">
+            <a class="navigation-link" th:href="@{/tracker}"
+               th:attr="aria-current=${activePage == 'home' ? 'page' : null}">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>
+                </svg>
+                <span>Home</span>
+            </a>
+            <a class="navigation-link" th:href="@{/my-books}"
+               th:attr="aria-current=${activePage == 'books' ? 'page' : null}">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 7v14m0-14C9 4 5 4 3 5v14c2-1 6-1 9 2m0-14c3-3 7-3 9-2v14c-2-1-6-1-9 2"/>
+                </svg>
+                <span>My Books</span>
+            </a>
+            <span class="navigation-link navigation-link--inactive" aria-disabled="true" title="Coming soon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9"/>
+                    <path d="M12 7v5l3 2"/>
+                </svg>
+                <span>Reading Session</span>
+            </span>
+            <span class="navigation-link navigation-link--inactive" aria-disabled="true" title="Coming soon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 20V12h4v8m4 0V8h4v12m4 0V4h4v16M2 20h21"/>
+                </svg>
+                <span>Statistics</span>
+            </span>
+            <span class="navigation-link navigation-link--inactive" aria-disabled="true" title="Coming soon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m10 2-.5 2.2a8 8 0 0 0-1.8 1L5.6 4.3 3.3 6.6l.9 2.1a8 8 0 0 0-.5 2L1.5 12v3l2.2.5a8 8 0 0 0 1 1.8l-.9 2.1 2.3 2.3 2.1-.9a8 8 0 0 0 2 .5L11 23h3l.5-2.2a8 8 0 0 0 1.8-1l2.1.9 2.3-2.3-.9-2.1a8 8 0 0 0 .5-2l2.2-.5v-3l-2.2-.5a8 8 0 0 0-1-1.8l.9-2.1-2.3-2.3-2.1.9a8 8 0 0 0-2-.5L14 2z"/>
+                    <circle cx="12.5" cy="13.5" r="3"/>
+                </svg>
+                <span>Settings</span>
+            </span>
+        </nav>
+
+        <div class="navigation-language" aria-label="Language">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"/>
+                <path d="M3 12h18M12 3a15 15 0 0 1 0 18m0-18a15 15 0 0 0 0 18"/>
+            </svg>
+            <span>English</span>
+            <span aria-hidden="true">⌄</span>
+        </div>
+    </aside>
+</th:block>

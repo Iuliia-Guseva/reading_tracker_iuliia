@@ -1,9 +1,12 @@
-//modal window or model box
+<!-- Modal window or model box for adding a new book -->
+ <!-- material used - https://www.w3schools.com/howto/howto_css_modals.asp -->
 <th:block th:fragment="addBookModal">
     <dialog id="add-book-modal" aria-labelledby="add-book-title">
         <button type="button" aria-label="Back to my books"
                 onclick="document.getElementById('add-book-modal').close()">&#8592; Back</button>
+                <!-- &#8592 is a code for "<-" -->
 
+        <!-- Live preview of the book being created  -->
         <section class="book-preview" aria-label="Book preview">
             <div class="cover-placeholder" aria-hidden="true">Book cover</div>
             <div class="preview-details">
@@ -17,6 +20,7 @@
 
         <hr>
 
+        <!-- Form for entering book details  -->
         <form class="book-form" th:action="@{/my-books}" th:object="${newBook}" method="post">
             <h2 id="book-form-heading">Book details</h2>
 
@@ -57,6 +61,8 @@
     </dialog>
 
     <script>
+
+        //Open the modal when the add book button is clicked
         const addBookModal = document.getElementById("add-book-modal");
         document.getElementById("open-add-book").addEventListener("click", () => {
             addBookModal.showModal();

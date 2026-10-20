@@ -1,0 +1,241 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+.page-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.navigation-panel {
+    display: flex;
+    flex: 0 0 4.5rem;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow: hidden;
+    padding: 2rem 0.5rem 1.5rem;
+    border-right: 1px solid;
+    transition: flex-basis 180ms ease, padding 180ms ease;
+}
+
+.navigation-panel:hover,
+.navigation-panel:focus-within {
+    flex-basis: 18rem;
+    padding-right: 1.25rem;
+    padding-left: 1.25rem;
+}
+
+.navigation-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin: 0.5rem 0 2.5rem;
+    color: inherit;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.navigation-brand span,
+.navigation-link span,
+.navigation-language span {
+    overflow: hidden;
+    max-width: 0;
+    opacity: 0;
+    white-space: nowrap;
+    transition: max-width 180ms ease, opacity 120ms ease;
+}
+
+.navigation-panel:hover .navigation-brand,
+.navigation-panel:focus-within .navigation-brand {
+    justify-content: flex-start;
+    gap: 1rem;
+}
+
+.navigation-panel:hover .navigation-brand span,
+.navigation-panel:focus-within .navigation-brand span,
+.navigation-panel:hover .navigation-link span,
+.navigation-panel:focus-within .navigation-link span,
+.navigation-panel:hover .navigation-language span,
+.navigation-panel:focus-within .navigation-language span {
+    max-width: 12rem;
+    opacity: 1;
+}
+
+.navigation-brand-icon {
+    width: 2rem;
+    height: 2rem;
+    flex: 0 0 auto;
+}
+
+.navigation-brand-icon,
+.navigation-link svg,
+.navigation-language svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
+.navigation-links {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.navigation-link {
+    display: flex;
+    min-height: 3.5rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 0.75rem 0;
+    border: 1px solid transparent;
+    border-radius: 0.75rem;
+    color: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.navigation-panel:hover .navigation-link,
+.navigation-panel:focus-within .navigation-link {
+    justify-content: flex-start;
+    gap: 1rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
+}
+
+.navigation-link:hover,
+.navigation-link:focus-visible,
+.navigation-link[aria-current="page"] {
+    border-color: currentColor;
+}
+
+.navigation-link--inactive {
+    cursor: default;
+}
+
+.navigation-link svg,
+.navigation-language svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex: 0 0 auto;
+}
+
+.navigation-language {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-top: auto;
+    padding: 1rem 0 0;
+}
+
+.navigation-panel:hover .navigation-language,
+.navigation-panel:focus-within .navigation-language {
+    justify-content: flex-start;
+    gap: 0.65rem;
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+}
+
+.navigation-language svg {
+    width: 1.75rem;
+    height: 1.75rem;
+}
+
+.page-content {
+    flex: 1;
+    min-width: 0;
+    padding: 2rem;
+}
+
+@media (max-width: 640px) {
+    .page-layout {
+        flex-direction: column;
+    }
+
+    .navigation-panel {
+        flex: 0 0 auto;
+        min-height: auto;
+        overflow: visible;
+        padding: 1rem;
+        border-right: 0;
+        border-bottom: 1px solid;
+        transition: none;
+    }
+
+    .navigation-panel:hover,
+    .navigation-panel:focus-within {
+        flex-basis: auto;
+        padding: 1rem;
+    }
+
+    .navigation-brand {
+        justify-content: flex-start;
+        gap: 1rem;
+        margin: 0 0 1rem;
+    }
+
+    .navigation-panel .navigation-brand span,
+    .navigation-panel .navigation-link span,
+    .navigation-panel .navigation-language span {
+        max-width: none;
+        opacity: 1;
+        transition: none;
+    }
+
+    .navigation-links {
+        grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+        gap: 0.25rem;
+    }
+
+    .navigation-link {
+        min-height: 3rem;
+        justify-content: flex-start;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .navigation-panel:hover .navigation-link,
+    .navigation-panel:focus-within .navigation-link {
+        justify-content: flex-start;
+        gap: 0.5rem;
+        padding: 0.5rem;
+    }
+
+    .navigation-language {
+        justify-content: flex-start;
+        gap: 0.65rem;
+        margin-top: 1rem;
+        padding-top: 0;
+    }
+
+    .navigation-panel:hover .navigation-language,
+    .navigation-panel:focus-within .navigation-language {
+        justify-content: flex-start;
+        gap: 0.65rem;
+        padding-right: 0;
+        padding-left: 0;
+    }
+
+    .page-content {
+        padding: 1rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .navigation-panel,
+    .navigation-brand span,
+    .navigation-link span,
+    .navigation-language span {
+        transition: none;
+    }
+}
