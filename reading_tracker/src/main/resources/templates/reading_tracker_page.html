@@ -19,16 +19,20 @@
                     <th>Books this year</th>
                 </tr>
             </thead>
-            <h3>Currently reading</h3>
-            <h3>My Books</h3>
-            <p><a th:href="@{/my-books}">View my books</a></p>
-            <ul>
-                <li th:each="book : ${books}">
-                    <span th:text="${book.title}">Book title</span>
-                    <span th:if="${book.author}" th:text="|by ${book.author}|">by Author</span>
-                </li>
-            </ul>
-            <p th:if="${#lists.isEmpty(books)}">No books added yet.</p>
+            <section class="tracker-card">
+                <h3>Currently reading</h3>
+            </section>
+            <section class="tracker-card">
+                <h3>My Books</h3>
+                <p><a th:href="@{/my-books}">View my books</a></p>
+                <ul>
+                    <li th:each="book : ${books}">
+                        <span th:text="${book.title}">Book title</span>
+                        <span th:if="${book.author}" th:text="|by ${book.author}|">by Author</span>
+                    </li>
+                </ul>
+                <p th:if="${#lists.isEmpty(books)}">No books added yet.</p>
+            </section>
         </main>
     </div>
 </body>

@@ -3,15 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#263c36">
     <title>Reading session</title>
     <link rel="stylesheet" th:href="@{/css/navigation.css}">
+    <link rel="stylesheet" th:href="@{/css/reading_session.css}">
 </head>
 <body>
     <div class="page-layout">
         <div th:replace="~{fragments/Navigation :: NavigationModal('reading-session')}"></div>
-        <main class="page-content">
-            <h1>Reading session</h1>
+        <main class="reading-session">
+            <section class="session-focus" aria-label="Reading timer">
+                <div class="timer-face">
+                    <!-- The circle and sprout are decorative parts of the timer design. -->
+                    <svg class="timer-ring" viewBox="0 0 220 220" aria-hidden="true">
+                        <circle cx="110" cy="110" r="104"></circle>
+                    </svg>
+                    <div class="timer-content">
+                        <svg class="sprout-icon" viewBox="0 0 32 32" aria-hidden="true">
+                            <path d="M16 27V15m0 5c-6 0-9-3-9-9 6 0 9 3 9 9Zm0-5c0-6 3-9 9-9 0 6-3 9-9 9ZM11 28h10"/>
+                        </svg>
+                        <p class="timer" id="timer" role="timer" aria-label="Elapsed reading time">00:00:00</p>
+                        <p class="session-status" id="session-status" aria-live="polite">Ready to read</p>
+                    </div>
+                </div>
+
+                <button class="session-control" id="session-control" type="button" aria-pressed="false">
+                    <span id="control-label">Start reading</span>
+                </button>
+            </section>
         </main>
     </div>
+
+        <script>
+
+            const timer = document.getElementById("timer");
+            const status = document.getElementById("session-status");
+            const control = document.getElementById("session-control");
+            const controlLabel = document.getElementById("control-label");
+
+            let elapsedSeconds = 0;
+            let timerInterval = null;
+
+            function addZero(number) {
+                if (number < 10) {
+                    return "0" + number;
+                }
+
+                return number;
+            }
+
+
+            function showTime() {
+                let hours = Math.floor(elapsedSeconds / 3600);
+                let minutes = Math.floor((elapsedSeconds % 3600) / 60);
+                let seconds = elapsedSeconds % 60;
+
+                timer.textContent =
+                    addZero(hours) + ":" + addZero(minutes) + ":" + addZero(seconds);
+            }
+
+
+            function startTimer() {
+                timerInterval = setInterval(function() {
+                    elapsedSeconds = elapsedSeconds + 1;
+                    showTime();
+                }, 1000);
+
+                status.textContent = "Reading...";
+                controlLabel.textContent = "Pause";
+                control.setAttribute("aria-pressed", "true");
+                control.classList.add("is-running");
+            }
+
+
+            function pauseTimer() {
+                clearInterval(timerInterval);
+                timerInterval = null;
+
+                status.textContent = "Paused";
+                controlLabel.textContent = "Resume reading";
+                control.setAttribute("aria-pressed", "false");
+                control.classList.remove("is-running");
+            }
+
+
+            control.addEventListener("click", function() {
+                if (timerInterval === null) {
+                    startTimer();
+                } else {
+                    pauseTimer();
+                }
+            });
+        </script>
 </body>
 </html>

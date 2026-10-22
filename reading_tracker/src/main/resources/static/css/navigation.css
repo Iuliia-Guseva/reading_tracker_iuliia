@@ -11,6 +11,10 @@ body {
     min-height: 100vh;
 }
 
+.navigation-panel .navigation-link[aria-current="page"] {
+    background-color: rgb(38 60 54 / 8%);
+}
+
 .navigation-panel {
     display: flex;
     flex: 0 0 4.5rem;
@@ -18,7 +22,9 @@ body {
     min-height: 100vh;
     overflow: hidden;
     padding: 2rem 0.5rem 1.5rem;
-    border-right: 1px solid;
+    border-right: 1px solid rgb(38 60 54 / 25%);
+    color: #263c36;
+    background-color: #e6edda;
     transition: flex-basis 180ms ease, padding 180ms ease;
 }
 
@@ -154,6 +160,21 @@ body {
     flex: 1;
     min-width: 0;
     padding: 2rem;
+}
+
+.tracker-card {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    border-radius: 1rem;
+    color: #263c36;
+}
+
+.tracker-card h3 {
+    margin-top: 0;
+}
+
+.tracker-card a {
+    color: inherit;
 }
 
 @media (max-width: 640px) {
