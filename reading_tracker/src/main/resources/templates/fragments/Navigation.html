@@ -26,26 +26,29 @@
                 </svg>
                 <span>My Books</span>
             </a>
-            <span class="navigation-link navigation-link--inactive" aria-disabled="true" title="Coming soon">
+            <a class="navigation-link" th:href="@{/reading-session}"
+               th:attr="aria-current=${activePage == 'reading-session' ? 'page' : null}">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                     <circle cx="12" cy="12" r="9"/>
                     <path d="M12 7v5l3 2"/>
                 </svg>
                 <span>Reading Session</span>
-            </span>
-            <span class="navigation-link navigation-link--inactive" aria-disabled="true" title="Coming soon">
+            </a>
+            <a class="navigation-link" th:href="@{/statistics}"
+               th:attr="aria-current=${activePage == 'statistics' ? 'page' : null}">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M4 20V12h4v8m4 0V8h4v12m4 0V4h4v16M2 20h21"/>
                 </svg>
                 <span>Statistics</span>
-            </span>
-            <span class="navigation-link navigation-link--inactive" aria-disabled="true" title="Coming soon">
+            </a>
+            <a class="navigation-link" th:href="@{/settings}"
+               th:attr="aria-current=${activePage == 'settings' ? 'page' : null}">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="m10 2-.5 2.2a8 8 0 0 0-1.8 1L5.6 4.3 3.3 6.6l.9 2.1a8 8 0 0 0-.5 2L1.5 12v3l2.2.5a8 8 0 0 0 1 1.8l-.9 2.1 2.3 2.3 2.1-.9a8 8 0 0 0 2 .5L11 23h3l.5-2.2a8 8 0 0 0 1.8-1l2.1.9 2.3-2.3-.9-2.1a8 8 0 0 0 .5-2l2.2-.5v-3l-2.2-.5a8 8 0 0 0-1-1.8l.9-2.1-2.3-2.3-2.1.9a8 8 0 0 0-2-.5L14 2z"/>
                     <circle cx="12.5" cy="13.5" r="3"/>
                 </svg>
                 <span>Settings</span>
-            </span>
+            </a>
         </nav>
 
         <div class="navigation-language" aria-label="Language">

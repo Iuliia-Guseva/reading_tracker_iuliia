@@ -33,6 +33,21 @@ public class TrackerController {
         return "reading_tracker_page";
     }
 
+    @GetMapping("/reading-session")
+    public String readingSession() {
+        return "ReadingSession";
+    }
+
+    @GetMapping("/statistics")
+    public String statistics() {
+        return "Statistics";
+    }
+
+    @GetMapping("/settings")
+    public String settings() {
+        return "Settings";
+    }
+    
     @GetMapping("/my-books")
     public String myBooks(Model model) {
         model.addAttribute("books", getBooks());
