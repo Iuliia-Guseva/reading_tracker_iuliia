@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reading Tracker</title>
     <link rel="stylesheet" th:href="@{/css/navigation.css}">
+    <link rel="stylesheet" th:href="@{/css/addBook.css}">
 </head>
 <body>
     <div class="page-layout">
@@ -27,6 +28,9 @@
                 <p><a th:href="@{/my-books}">View my books</a></p>
                 <ul>
                     <li th:each="book : ${books}">
+                        <img class="book-cover-thumbnail" th:if="${book.coverImage != null}"
+                             th:src="@{/my-books/{id}/cover(id=${book.id})}"
+                             th:alt="|Cover of ${book.title}|">
                         <span th:text="${book.title}">Book title</span>
                         <span th:if="${book.author}" th:text="|by ${book.author}|">by Author</span>
                     </li>

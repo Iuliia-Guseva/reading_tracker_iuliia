@@ -41,6 +41,12 @@
             const control = document.getElementById("session-control");
             const controlLabel = document.getElementById("control-label");
 
+            const totalReadingTimeStorageKey = "readingTrackerTotalSeconds";
+            const storedTotalReadingSeconds = Number(localStorage.getItem(totalReadingTimeStorageKey));
+            let totalReadingSeconds =
+                Number.isSafeInteger(storedTotalReadingSeconds) && storedTotalReadingSeconds >= 0
+                    ? storedTotalReadingSeconds
+                    : 0;
             let elapsedSeconds = 0;
             let timerInterval = null;
 
@@ -53,19 +59,26 @@
             }
 
 
-            function showTime() {
-                let hours = Math.floor(elapsedSeconds / 3600);
-                let minutes = Math.floor((elapsedSeconds % 3600) / 60);
-                let seconds = elapsedSeconds % 60;
+            function formatTime(totalSeconds) {
+                let hours = Math.floor(totalSeconds / 3600);
+                let minutes = Math.floor((totalSeconds % 3600) / 60);
+                let seconds = totalSeconds % 60;
 
-                timer.textContent =
-                    addZero(hours) + ":" + addZero(minutes) + ":" + addZero(seconds);
+                return addZero(hours) + ":" + addZero(minutes) + ":" + addZero(seconds);
             }
 
+
+            function showTime() {
+                timer.textContent = formatTime(elapsedSeconds);
+            }
+
+            showTime();
 
             function startTimer() {
                 timerInterval = setInterval(function() {
                     elapsedSeconds = elapsedSeconds + 1;
+                    totalReadingSeconds = totalReadingSeconds + 1;
+                    localStorage.setItem(totalReadingTimeStorageKey, totalReadingSeconds);
                     showTime();
                 }, 1000);
 

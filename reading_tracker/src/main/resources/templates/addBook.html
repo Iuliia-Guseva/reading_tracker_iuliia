@@ -8,7 +8,10 @@
 
         <!-- Live preview of the book being created  -->
         <section class="book-preview" aria-label="Book preview">
-            <div class="cover-placeholder" aria-hidden="true">Book cover</div>
+            <div class="cover-placeholder">
+                <img id="preview-cover" alt="Selected book cover" hidden>
+                <span id="cover-placeholder-text" aria-hidden="true">Book cover</span>
+            </div>
             <div class="preview-details">
                 <h2 id="add-book-title"><span id="preview-title">Book title</span></h2>
                 <p id="preview-author">Author</p>
@@ -21,8 +24,11 @@
         <hr>
 
         <!-- Form for entering book details  -->
-        <form class="book-form" th:action="@{/my-books}" th:object="${newBook}" method="post">
+        <form class="book-form" th:action="@{/my-books}" th:object="${newBook}"
+              method="post" enctype="multipart/form-data">
             <h2 id="book-form-heading">Book details</h2>
+
+            <p class="cover-error full-width" th:if="${coverError}" th:text="${coverError}" role="alert"></p>
 
             <label class="field full-width" for="book-title">
                 Title
@@ -42,6 +48,13 @@
             <label class="field" for="book-year">
                 Publication year
                 <input id="book-year" type="number" min="1" th:field="*{publicationYear}" placeholder="Year">
+            </label>
+
+            <!-- Upload a required image file for the book cover. -->
+            <label class="field full-width" for="book-cover">
+                Book cover
+                <input id="book-cover" name="cover" type="file"
+                       accept="image/jpeg,image/png,image/gif,image/webp" required>
             </label>
 
             <label class="field" for="book-status">
@@ -91,6 +104,29 @@
         };
         statusSelect.addEventListener("change", updateStatusPreview);
         updateStatusPreview();
+
+        // Show the selected cover in the preview and restore the placeholder when cleared.
+        const coverInput = document.getElementById("book-cover");
+        const coverPreview = document.getElementById("preview-cover");
+        const coverPlaceholder = document.getElementById("cover-placeholder-text");
+        let previewCoverUrl = null;
+        coverInput.addEventListener("change", () => {
+            if (previewCoverUrl !== null) {
+                URL.revokeObjectURL(previewCoverUrl);
+                previewCoverUrl = null;
+            }
+            const file = coverInput.files[0];
+            if (file) {
+                previewCoverUrl = URL.createObjectURL(file);
+                coverPreview.src = previewCoverUrl;
+                coverPreview.hidden = false;
+                coverPlaceholder.hidden = true;
+            } else {
+                coverPreview.removeAttribute("src");
+                coverPreview.hidden = true;
+                coverPlaceholder.hidden = false;
+            }
+        });
 
         addBookModal.addEventListener("click", (event) => {
             if (event.target === addBookModal) {

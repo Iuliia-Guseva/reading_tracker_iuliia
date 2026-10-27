@@ -15,6 +15,10 @@ public class Book {
     private Integer pages;
     private Integer rating;
     private boolean favorite;
+    // @Lob stores the cover as large binary data; byte[] holds the image's raw bytes.
+    @Lob
+    private byte[] coverImage;
+    private String coverContentType;
     @Enumerated (EnumType.STRING)
     private BookStatus status;
 
@@ -62,6 +66,13 @@ public class Book {
     public BookStatus getStatus(){
         return status;
     }
+    // Return the cover image as raw binary bytes.
+    public byte[] getCoverImage(){
+        return coverImage;
+    }
+    public String getCoverContentType(){
+        return coverContentType;
+    }
     //setter: updates the field value
     public void setId(Long id){
         this.id = id;
@@ -86,5 +97,11 @@ public class Book {
     }
     public void setStatus(BookStatus status){
         this.status = status;
+    }
+    public void setCoverImage(byte[] coverImage){
+        this.coverImage = coverImage;
+    }
+    public void setCoverContentType(String coverContentType){
+        this.coverContentType = coverContentType;
     }
 }
