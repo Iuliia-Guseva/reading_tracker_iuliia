@@ -2,9 +2,10 @@
  <!-- material used - https://www.w3schools.com/howto/howto_css_modals.asp -->
 <th:block th:fragment="addBookModal">
     <dialog id="add-book-modal" aria-labelledby="add-book-title">
-        <button type="button" aria-label="Back to my books"
-                onclick="document.getElementById('add-book-modal').close()">&#8592; Back</button>
-                <!-- &#8592 is a code for "<-" -->
+        <button class="modal-back" type="button" aria-label="Back to my books"
+                onclick="document.getElementById('add-book-modal').close()">
+            <span aria-hidden="true">&larr;</span> Back
+        </button>
 
         <!-- Live preview of the book being created  -->
         <section class="book-preview" aria-label="Book preview">
@@ -15,18 +16,24 @@
             <div class="preview-details">
                 <h2 id="add-book-title"><span id="preview-title">Book title</span></h2>
                 <p id="preview-author">Author</p>
-                <p>Status: <span id="preview-status">To read</span></p>
-                <p><span id="preview-pages">0</span> pages</p>
-                <p>Publication year: <span id="preview-year">Not set</span></p>
+                <p class="preview-status"><span id="preview-status">To read</span></p>
+                <p class="preview-meta">
+                    <span class="preview-icon" aria-hidden="true">&#9638;</span>
+                    <span><span id="preview-pages">0</span> pages</span>
+                </p>
+                <p class="preview-meta">
+                    <span class="preview-icon" aria-hidden="true">&#9711;</span>
+                    <span>Published <span id="preview-year">Not set</span></span>
+                </p>
             </div>
         </section>
 
-        <hr>
+        <hr class="preview-divider">
 
         <!-- Form for entering book details  -->
         <form class="book-form" th:action="@{/my-books}" th:object="${newBook}"
               method="post" enctype="multipart/form-data">
-            <h2 id="book-form-heading">Book details</h2>
+            <h2 id="book-form-heading">Add book</h2>
 
             <p class="cover-error full-width" th:if="${coverError}" th:text="${coverError}" role="alert"></p>
 
@@ -66,9 +73,9 @@
             </label>
 
             <div class="modal-actions">
-                <button type="button"
+                <button class="cancel-button" type="button"
                         onclick="document.getElementById('add-book-modal').close()">Cancel</button>
-                <button type="submit">Save book</button>
+                <button class="save-button" type="submit">Save</button>
             </div>
         </form>
     </dialog>
