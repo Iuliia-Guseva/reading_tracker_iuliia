@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.multipart.MultipartFile;
 
+import reading_tracker.config.DefaultDataInitializer;
 import reading_tracker.domain.Book;
 import reading_tracker.domain.BookRepository;
 import reading_tracker.domain.BookStatus;
@@ -31,9 +32,11 @@ public class TrackerController {
             "image/jpeg", "image/png", "image/gif", "image/webp");
 
     private final BookRepository bookRepository;
+    private final DefaultDataInitializer defaultDataInitializer;
 
-    public TrackerController(BookRepository bookRepository) {
+    public TrackerController(BookRepository bookRepository, DefaultDataInitializer defaultDataInitializer) {
         this.bookRepository = bookRepository;
+        this.defaultDataInitializer = defaultDataInitializer;
     }
 
     @GetMapping("/")
@@ -48,12 +51,14 @@ public class TrackerController {
     }
 
     @GetMapping("/reading-session")
-    public String readingSession() {
+    public String readingSession(Model model) {
+        model.addAttribute("sampleReadingSeconds", defaultDataInitializer.getDefaultReadingSeconds());
         return "ReadingSession";
     }
 
     @GetMapping("/statistics")
-    public String statistics() {
+    public String statistics(Model model) {
+        model.addAttribute("sampleReadingSeconds", defaultDataInitializer.getDefaultReadingSeconds());
         return "Statistics";
     }
 
@@ -68,35 +73,67 @@ public class TrackerController {
         return "MyBooksList";
     }
 
+    @GetMapping("/my-books/{id}/edit")
+    public String editBookPage(@PathVariable Long id, Model model) {
+        Book book = findBook(id);
+        prepareEditPage(model, book, book);
+        return "MyBooksList";
+    }
+
     @PostMapping("/my-books")
     public String addBook(@ModelAttribute("newBook") Book book,
-                          @RequestParam(name = "cover") MultipartFile cover,
+                          @RequestParam(name = "cover", required = false) MultipartFile cover,
                           Model model) throws IOException {
-        // A cover is required, so keep the form open and explain the error if none was selected.
-        if (cover.isEmpty()) {
-            prepareMyBooksPage(model, book);
-            model.addAttribute("coverError", "Please choose a book cover image.");
-            return "MyBooksList";
+        if (cover != null && !cover.isEmpty()) {
+            byte[] image = cover.getBytes();
+            String contentType = cover.getContentType();
+            // Check the size and actual image signature before saving the uploaded file.
+            if (!isValidCover(image, contentType)) {
+                prepareMyBooksPage(model, book);
+                model.addAttribute("coverError",
+                        "Choose a JPEG, PNG, GIF or WebP image smaller than 5 MB.");
+                return "MyBooksList";
+            }
+            book.setCoverImage(image);
+            book.setCoverContentType(contentType);
         }
-        byte[] image = cover.getBytes();
-        String contentType = cover.getContentType();
-        // Check the size and actual image signature before saving the uploaded file.
-        if (image.length > MAX_COVER_SIZE || !isSupportedImage(image, contentType)) {
-            prepareMyBooksPage(model, book);
-            model.addAttribute("coverError",
-                    "Choose a JPEG, PNG, GIF or WebP image smaller than 5 MB.");
-            return "MyBooksList";
-        }
-        book.setCoverImage(image);
-        book.setCoverContentType(contentType);
         bookRepository.save(book);
+        return "redirect:/my-books";
+    }
+
+    @PostMapping("/my-books/{id}/edit")
+    public String updateBook(@PathVariable Long id,
+                             @ModelAttribute("newBook") Book formBook,
+                             @RequestParam(name = "cover", required = false) MultipartFile cover,
+                             Model model) throws IOException {
+        Book savedBook = findBook(id);
+        // Keep the saved cover unless a valid replacement was uploaded.
+        if (cover != null && !cover.isEmpty()) {
+            byte[] image = cover.getBytes();
+            String contentType = cover.getContentType();
+            if (!isValidCover(image, contentType)) {
+                prepareEditPage(model, formBook, savedBook);
+                model.addAttribute("coverError",
+                        "Choose a JPEG, PNG, GIF or WebP image smaller than 5 MB.");
+                return "MyBooksList";
+            }
+            savedBook.setCoverImage(image);
+            savedBook.setCoverContentType(contentType);
+        }
+
+        // Update only fields exposed by the form; retain other saved book details.
+        savedBook.setTitle(formBook.getTitle());
+        savedBook.setAuthor(formBook.getAuthor());
+        savedBook.setPublicationYear(formBook.getPublicationYear());
+        savedBook.setPages(formBook.getPages());
+        savedBook.setStatus(formBook.getStatus());
+        bookRepository.save(savedBook);
         return "redirect:/my-books";
     }
 
     @GetMapping("/my-books/{id}/cover")
     public ResponseEntity<byte[]> bookCover(@PathVariable Long id) {
-        Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Book book = findBook(id);
         // Return stored image bytes using their validated media type.
         if (book.getCoverImage() == null || book.getCoverContentType() == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -115,6 +152,28 @@ public class TrackerController {
         }
         model.addAttribute("newBook", newBook);
         model.addAttribute("bookStatuses", BookStatus.values());
+        model.addAttribute("bookFormAction", "/my-books");
+        model.addAttribute("bookFormTitle", "Add book");
+    }
+
+    private void prepareEditPage(Model model, Book formBook, Book savedBook) {
+        prepareMyBooksPage(model, formBook);
+        formBook.setId(savedBook.getId());
+        // Restore the saved cover for the edit preview and after validation errors.
+        formBook.setCoverImage(savedBook.getCoverImage());
+        formBook.setCoverContentType(savedBook.getCoverContentType());
+        model.addAttribute("editBookId", savedBook.getId());
+        model.addAttribute("bookFormAction", "/my-books/" + savedBook.getId() + "/edit");
+        model.addAttribute("bookFormTitle", "Edit book");
+    }
+
+    private Book findBook(Long id) {
+        return bookRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    private boolean isValidCover(byte[] image, String contentType) {
+        return image.length <= MAX_COVER_SIZE && isSupportedImage(image, contentType);
     }
 
     private boolean isSupportedImage(byte[] image, String contentType) {

@@ -20,6 +20,8 @@
                          th:alt="|Cover of ${book.title}|">
                     <span th:text="${book.title}">Book title</span>
                     <span th:if="${book.author}" th:text="|by ${book.author}|">by Author</span>
+                    <a th:href="@{/my-books/{id}/edit(id=${book.id})}"
+                       th:attr="aria-label=|Edit ${book.title}|">Edit</a>
                 </li>
             </ul>
             <p th:if="${#lists.isEmpty(books)}">No books added yet.</p>

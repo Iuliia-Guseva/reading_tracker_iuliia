@@ -1,7 +1,8 @@
 <!-- Modal window or model box for adding a new book -->
  <!-- material used - https://www.w3schools.com/howto/howto_css_modals.asp -->
 <th:block th:fragment="addBookModal">
-    <dialog id="add-book-modal" aria-labelledby="add-book-title">
+    <dialog id="add-book-modal" aria-labelledby="add-book-title"
+            th:attr="data-open=${editBookId != null or coverError != null}">
         <button class="modal-back" type="button" aria-label="Back to my books"
                 onclick="document.getElementById('add-book-modal').close()">
             <span aria-hidden="true">&larr;</span> Back
@@ -10,8 +11,16 @@
         <!-- Live preview of the book being created  -->
         <section class="book-preview" aria-label="Book preview">
             <div class="cover-placeholder">
-                <img id="preview-cover" alt="Selected book cover" hidden>
-                <span id="cover-placeholder-text" aria-hidden="true">Book cover</span>
+                <img id="preview-cover" alt="Book cover"
+                     th:if="${editBookId != null and newBook.coverImage != null}"
+                     th:src="@{/my-books/{id}/cover(id=${editBookId})}"
+                     th:attr="data-existing-src=@{/my-books/{id}/cover(id=${editBookId})}">
+                <img id="preview-cover" alt="Selected book cover" hidden
+                     th:unless="${editBookId != null and newBook.coverImage != null}">
+                <span id="cover-placeholder-text" aria-hidden="true"
+                      th:style="${editBookId != null and newBook.coverImage != null} ? 'display: none' : ''">
+                    Book cover
+                </span>
             </div>
             <div class="preview-details">
                 <h2 id="add-book-title"><span id="preview-title">Book title</span></h2>
@@ -31,9 +40,9 @@
         <hr class="preview-divider">
 
         <!-- Form for entering book details  -->
-        <form class="book-form" th:action="@{/my-books}" th:object="${newBook}"
+        <form class="book-form" th:action="${bookFormAction}" th:object="${newBook}"
               method="post" enctype="multipart/form-data">
-            <h2 id="book-form-heading">Add book</h2>
+            <h2 id="book-form-heading" th:text="${bookFormTitle}">Add book</h2>
 
             <p class="cover-error full-width" th:if="${coverError}" th:text="${coverError}" role="alert"></p>
 
@@ -57,11 +66,11 @@
                 <input id="book-year" type="number" min="1" th:field="*{publicationYear}" placeholder="Year">
             </label>
 
-            <!-- Upload a required image file for the book cover. -->
+            <!-- Book cover is optional; uploaded images are validated before saving. -->
             <label class="field full-width" for="book-cover">
                 Book cover
                 <input id="book-cover" name="cover" type="file"
-                       accept="image/jpeg,image/png,image/gif,image/webp" required>
+                       accept="image/jpeg,image/png,image/gif,image/webp">
             </label>
 
             <label class="field" for="book-status">
@@ -87,6 +96,9 @@
         document.getElementById("open-add-book").addEventListener("click", () => {
             addBookModal.showModal();
         });
+        if (addBookModal.dataset.open === "true") {
+            addBookModal.showModal();
+        }
 
         const previewFields = [
             ["book-title", "preview-title", "Book title"],
@@ -129,9 +141,16 @@
                 coverPreview.hidden = false;
                 coverPlaceholder.hidden = true;
             } else {
-                coverPreview.removeAttribute("src");
-                coverPreview.hidden = true;
-                coverPlaceholder.hidden = false;
+                const existingCover = coverPreview.dataset.existingSrc;
+                if (existingCover) {
+                    coverPreview.src = existingCover;
+                    coverPreview.hidden = false;
+                    coverPlaceholder.hidden = true;
+                } else {
+                    coverPreview.removeAttribute("src");
+                    coverPreview.hidden = true;
+                    coverPlaceholder.hidden = false;
+                }
             }
         });
 

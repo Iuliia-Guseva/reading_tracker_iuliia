@@ -26,20 +26,36 @@
 
 .modal-back {
     display: inline-flex;
+    box-sizing: border-box;
+    min-height: 2.5rem;
     align-items: center;
-    gap: 0.65rem;
-    padding: 0;
+    gap: 0.4rem;
+    padding: 0 0.75rem 0 0.45rem;
     border: 0;
+    border-radius: 0.5rem;
+    appearance: none;
     color: var(--forest-green);
     background: transparent;
     font: 500 0.95rem Arial, sans-serif;
-    font-size: 0.95rem;
     cursor: pointer;
 }
 
 .modal-back span {
-    font-size: 1.5rem;
+    display: grid;
+    width: 1.25rem;
+    height: 1.25rem;
+    place-items: center;
+    font-size: 1.25rem;
     line-height: 1;
+}
+
+.modal-back:hover {
+    background: #edf1e8;
+}
+
+.modal-back:focus-visible {
+    outline: none;
+    background: #edf1e8;
 }
 
 .book-preview {
@@ -186,6 +202,7 @@
     min-height: 3.2rem;
     padding: 0.45rem;
     color: #536258;
+    font-size: 0;
 }
 
 .field input[type="file"]::file-selector-button {
@@ -196,7 +213,7 @@
     border-radius: 0.45rem;
     color: var(--forest-green);
     background: var(--sage-green);
-    font: inherit;
+    font: 0.95rem Arial, sans-serif;
     cursor: pointer;
 }
 
