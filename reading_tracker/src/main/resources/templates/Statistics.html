@@ -11,7 +11,32 @@
         <div th:replace="~{fragments/Navigation :: NavigationModal('statistics')}"></div>
         <main class="page-content">
             <h1>Statistics</h1>
+            <p>Total reading time: <span id="total-reading-time"
+                    th:attr="data-sample-seconds=${sampleReadingSeconds}">00:00:00</span></p>
         </main>
     </div>
+    <script>
+        const totalReadingTimeStorageKey = "readingTrackerTotalSeconds";
+        const totalReadingTime = document.getElementById("total-reading-time");
+        const storedValue = localStorage.getItem(totalReadingTimeStorageKey);
+        const sampleReadingSeconds = Number(totalReadingTime.dataset.sampleSeconds);
+        const storedTotalReadingSeconds =
+            storedValue === null ? sampleReadingSeconds : Number(storedValue);
+        const totalReadingSeconds =
+            Number.isSafeInteger(storedTotalReadingSeconds) && storedTotalReadingSeconds >= 0
+                ? storedTotalReadingSeconds
+                : 0;
+
+        if (storedValue === null) {
+            localStorage.setItem(totalReadingTimeStorageKey, totalReadingSeconds);
+        }
+
+        const hours = Math.floor(totalReadingSeconds / 3600);
+        const minutes = Math.floor((totalReadingSeconds % 3600) / 60);
+        const seconds = totalReadingSeconds % 60;
+        const formatPart = (value) => String(value).padStart(2, "0");
+        totalReadingTime.textContent =
+            formatPart(hours) + ":" + formatPart(minutes) + ":" + formatPart(seconds);
+    </script>
 </body>
 </html>

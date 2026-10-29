@@ -12,7 +12,8 @@
     <div class="page-layout">
         <div th:replace="~{fragments/Navigation :: NavigationModal('reading-session')}"></div>
         <main class="reading-session">
-            <section class="session-focus" aria-label="Reading timer">
+            <section class="session-focus" aria-label="Reading timer"
+                     th:attr="data-sample-reading-seconds=${sampleReadingSeconds}">
                 <div class="timer-face">
                     <!-- The circle and sprout are decorative parts of the timer design. -->
                     <svg class="timer-ring" viewBox="0 0 220 220" aria-hidden="true">
@@ -42,11 +43,19 @@
             const controlLabel = document.getElementById("control-label");
 
             const totalReadingTimeStorageKey = "readingTrackerTotalSeconds";
-            const storedTotalReadingSeconds = Number(localStorage.getItem(totalReadingTimeStorageKey));
+            const storedValue = localStorage.getItem(totalReadingTimeStorageKey);
+            const sampleReadingSeconds = Number(
+                document.querySelector(".session-focus").dataset.sampleReadingSeconds
+            );
+            const storedTotalReadingSeconds =
+                storedValue === null ? sampleReadingSeconds : Number(storedValue);
             let totalReadingSeconds =
                 Number.isSafeInteger(storedTotalReadingSeconds) && storedTotalReadingSeconds >= 0
                     ? storedTotalReadingSeconds
                     : 0;
+            if (storedValue === null) {
+                localStorage.setItem(totalReadingTimeStorageKey, totalReadingSeconds);
+            }
             let elapsedSeconds = 0;
             let timerInterval = null;
 
