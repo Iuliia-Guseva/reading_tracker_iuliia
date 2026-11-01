@@ -47,13 +47,13 @@
             const sampleReadingSeconds = Number(
                 document.querySelector(".session-focus").dataset.sampleReadingSeconds
             );
-            const storedTotalReadingSeconds =
-                storedValue === null ? sampleReadingSeconds : Number(storedValue);
+            const storedTotalReadingSeconds = Number(storedValue);
             let totalReadingSeconds =
-                Number.isSafeInteger(storedTotalReadingSeconds) && storedTotalReadingSeconds >= 0
+                Number.isSafeInteger(storedTotalReadingSeconds)
+                        && storedTotalReadingSeconds >= sampleReadingSeconds
                     ? storedTotalReadingSeconds
-                    : 0;
-            if (storedValue === null) {
+                    : sampleReadingSeconds;
+            if (storedValue !== String(totalReadingSeconds)) {
                 localStorage.setItem(totalReadingTimeStorageKey, totalReadingSeconds);
             }
             let elapsedSeconds = 0;

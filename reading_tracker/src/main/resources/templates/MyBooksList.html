@@ -11,23 +11,119 @@
     <div class="page-layout">
         <div th:replace="~{fragments/Navigation :: NavigationModal('books')}"></div>
         <main class="page-content">
-            <h1>My Books</h1>
-            <button id="open-add-book" type="button">Add book</button>
-            <ul class="book-list">
-                <li th:each="book : ${books}">
-                    <img class="book-cover-thumbnail" th:if="${book.coverImage != null}"
-                         th:src="@{/my-books/{id}/cover(id=${book.id})}"
-                         th:alt="|Cover of ${book.title}|">
-                    <span th:text="${book.title}">Book title</span>
-                    <span th:if="${book.author}" th:text="|by ${book.author}|">by Author</span>
-                    <a th:href="@{/my-books/{id}/edit(id=${book.id})}"
-                       th:attr="aria-label=|Edit ${book.title}|">Edit</a>
-                </li>
-            </ul>
-            <p th:if="${#lists.isEmpty(books)}">No books added yet.</p>
+            <section class="books-library" aria-labelledby="books-heading">
+                <header class="books-header">
+                    <h1 id="books-heading">
+                        <svg class="books-heading-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 7v14m0-14C9 4 5 4 3 5v14c2-1 6-1 9 2m0-14c3-3 7-3 9-2v14c-2-1-6-1-9 2"/>
+                        </svg>
+                        My Books
+                    </h1>
+                    <div class="books-toolbar">
+                        <!-- Search the book list by title or author. -->
+                        <label class="book-search">
+                            <span class="visually-hidden">Search books by title or author</span>
+                            <input id="book-search" type="search" placeholder="Search by title, author..."
+                                   autocomplete="off">
+                        </label>
+                        <button class="library-add-button" id="open-add-book" type="button">
+                            <span aria-hidden="true">+</span> Add book
+                        </button>
+                    </div>
+                    <!-- These buttons filter the list by each book's reading status. -->
+                    <div class="book-filters" role="group" aria-label="Filter books by reading status">
+                        <button class="book-filter is-active" type="button" data-filter="ALL" aria-pressed="true">
+                            All <span data-count="ALL">0</span>
+                        </button>
+                        <button class="book-filter" type="button" data-filter="READING" aria-pressed="false">
+                            Reading <span data-count="READING">0</span>
+                        </button>
+                        <button class="book-filter" type="button" data-filter="COMPLETED" aria-pressed="false">
+                            Read <span data-count="COMPLETED">0</span>
+                        </button>
+                        <button class="book-filter" type="button" data-filter="TO_READ" aria-pressed="false">
+                            Want to read <span data-count="TO_READ">0</span>
+                        </button>
+                    </div>
+                </header>
+
+                <ul class="book-list">
+                    <li class="book-list-item" th:each="book : ${books}" th:attr="data-status=${book.status}">
+                        <img class="book-cover-thumbnail" th:if="${book.coverImage != null}"
+                             th:src="@{/my-books/{id}/cover(id=${book.id})}"
+                             th:alt="|Cover of ${book.title}|">
+                        <div class="book-cover-placeholder" th:unless="${book.coverImage != null}"
+                             aria-hidden="true">Book cover</div>
+                        <div class="book-list-details">
+                            <h2 class="book-list-title" th:text="${book.title}">Book title</h2>
+                            <p class="book-list-author" th:if="${book.author}" th:text="${book.author}">Author</p>
+                            <span class="book-status-badge"
+                                  th:classappend="${book.status.name() == 'READING'} ? ' status-reading' : (${book.status.name() == 'COMPLETED'} ? ' status-completed' : ' status-to-read')"
+                                  th:text="${book.status.name() == 'COMPLETED' ? 'Read' : (book.status.name() == 'READING' ? 'Reading' : 'Want to read')}">
+                                Reading
+                            </span>
+                        </div>
+                        <span class="book-page-count" th:if="${book.pages != null}"
+                              th:text="|${book.pages} pages|">300 pages</span>
+                        <a class="book-edit-link" th:href="@{/my-books/{id}/edit(id=${book.id})}"
+                           th:attr="aria-label=|Edit ${book.title}|">Edit</a>
+                    </li>
+                </ul>
+                <p class="book-list-empty" th:if="${#lists.isEmpty(books)}">No books added yet.</p>
+                <p class="book-list-empty" id="no-matching-books" hidden>No books match your search.</p>
+            </section>
         </main>
     </div>
 
     <div th:replace="~{addBook :: addBookModal}"></div>
+    <script>
+        const bookItems = Array.from(document.querySelectorAll(".book-list-item"));
+        const searchInput = document.getElementById("book-search");
+        const filterButtons = Array.from(document.querySelectorAll(".book-filter"));
+        const noMatchingBooks = document.getElementById("no-matching-books");
+        let activeFilter = "ALL";
+
+        // Show how many books belong to each status filter.
+        document.querySelectorAll("[data-count]").forEach((count) => {
+            const filter = count.dataset.count;
+            count.textContent = filter === "ALL"
+                ? bookItems.length
+                : bookItems.filter((book) => book.dataset.status === filter).length;
+        });
+
+        // Display books that match both the selected status and search text.
+        function updateBookList() {
+            const searchTerm = searchInput.value.trim().toLocaleLowerCase();
+            let visibleBooks = 0;
+
+            bookItems.forEach((book) => {
+                const matchesFilter = activeFilter === "ALL" || book.dataset.status === activeFilter;
+                const matchesSearch = book.textContent.toLocaleLowerCase().includes(searchTerm);
+                const isVisible = matchesFilter && matchesSearch;
+                book.hidden = !isVisible;
+                if (isVisible) {
+                    visibleBooks += 1;
+                }
+            });
+
+            noMatchingBooks.hidden = visibleBooks > 0 || bookItems.length === 0;
+        }
+
+        // Refresh the list whenever the search text changes.
+        searchInput.addEventListener("input", updateBookList);
+        // Update the active filter when a status button is selected.
+        filterButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                activeFilter = button.dataset.filter;
+                filterButtons.forEach((filterButton) => {
+                    const isActive = filterButton === button;
+                    filterButton.classList.toggle("is-active", isActive);
+                    filterButton.setAttribute("aria-pressed", String(isActive));
+                });
+                updateBookList();
+            });
+        });
+        updateBookList();
+    </script>
 </body>
 </html>

@@ -20,14 +20,13 @@
         const totalReadingTime = document.getElementById("total-reading-time");
         const storedValue = localStorage.getItem(totalReadingTimeStorageKey);
         const sampleReadingSeconds = Number(totalReadingTime.dataset.sampleSeconds);
-        const storedTotalReadingSeconds =
-            storedValue === null ? sampleReadingSeconds : Number(storedValue);
-        const totalReadingSeconds =
-            Number.isSafeInteger(storedTotalReadingSeconds) && storedTotalReadingSeconds >= 0
-                ? storedTotalReadingSeconds
-                : 0;
+        const storedTotalReadingSeconds = Number(storedValue);
+        const totalReadingSeconds = Number.isSafeInteger(storedTotalReadingSeconds)
+                && storedTotalReadingSeconds >= sampleReadingSeconds
+            ? storedTotalReadingSeconds
+            : sampleReadingSeconds;
 
-        if (storedValue === null) {
+        if (storedValue !== String(totalReadingSeconds)) {
             localStorage.setItem(totalReadingTimeStorageKey, totalReadingSeconds);
         }
 
