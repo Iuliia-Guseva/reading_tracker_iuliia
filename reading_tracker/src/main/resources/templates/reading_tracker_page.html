@@ -5,37 +5,139 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reading Tracker</title>
     <link rel="stylesheet" th:href="@{/css/navigation.css}">
-    <link rel="stylesheet" th:href="@{/css/addBook.css}">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
 </head>
 <body>
     <div class="page-layout">
         <div th:replace="~{fragments/Navigation :: NavigationModal('home')}"></div>
-        <main class="page-content">
-            <h1>Hello, user!</h1>
-            <h4>What will you read today?</h4>
-            <thead>
-                <tr>
-                    <th>Total Books</th>
-                    <th>Reading Time</th>
-                    <th>Books this year</th>
-                </tr>
-            </thead>
-            <section class="tracker-card">
-                <h3>Currently reading</h3>
+        <main class="page-content home-page"
+              th:with="readingBooks=${books.?[status.name() == 'READING']},
+                       completedBooks=${books.?[status.name() == 'COMPLETED']}">
+            <header class="home-header">
+                <div>
+                    <p class="home-eyebrow">YOUR PERSONAL READING SPACE</p>
+                    <h1>Good afternoon, reader <span aria-hidden="true">☀</span></h1>
+                    <p class="home-subtitle">What will you read today?</p>
+                </div>
+            </header>
+
+            <!-- Show a quick summary of the reading library. -->
+            <section class="home-stats" aria-label="Your reading at a glance">
+                <article class="stat-card">
+                    <span class="stat-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 7v14m0-14C9 4 5 4 3 5v14c2-1 6-1 9 2m0-14c3-3 7-3 9-2v14c-2-1-6-1-9 2"/>
+                        </svg>
+                    </span>
+                    <strong class="stat-value" th:text="${#lists.size(books)}">0</strong>
+                    <span class="stat-label">Total books</span>
+                </article>
+                <article class="stat-card">
+                    <span class="stat-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="9"/>
+                            <path d="M12 7v5l3 2"/>
+                        </svg>
+                    </span>
+                    <strong class="stat-value" th:text="${#lists.size(readingBooks)}">0</strong>
+                    <span class="stat-label">Currently reading</span>
+                </article>
+                <article class="stat-card">
+                    <span class="stat-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="m5 12 4 4L19 6"/>
+                            <circle cx="12" cy="12" r="10"/>
+                        </svg>
+                    </span>
+                    <strong class="stat-value" th:text="${#lists.size(completedBooks)}">0</strong>
+                    <span class="stat-label">Books completed</span>
+                </article>
             </section>
-            <section class="tracker-card">
-                <h3>My Books</h3>
-                <p><a th:href="@{/my-books}">View my books</a></p>
-                <ul>
-                    <li th:each="book : ${books}">
-                        <img class="book-cover-thumbnail" th:if="${book.coverImage != null}"
+
+            <!-- Highlight books that are currently being read. -->
+            <section class="home-section" aria-labelledby="currently-reading-heading">
+                <div class="section-heading">
+                    <div>
+                        <p class="section-kicker">PICK UP WHERE YOU LEFT OFF</p>
+                        <h2 id="currently-reading-heading">Currently reading</h2>
+                    </div>
+                    <a class="text-link" th:href="@{/my-books}">See all <span aria-hidden="true">→</span></a>
+                </div>
+
+                <div class="reading-overview">
+                    <div class="reading-list">
+                        <article class="reading-book-card" th:each="book : ${readingBooks}">
+                            <img class="reading-book-cover" th:if="${book.coverImage != null}"
+                                 th:src="@{/my-books/{id}/cover(id=${book.id})}"
+                                 th:alt="|Cover of ${book.title}|">
+                            <div class="reading-book-cover cover-placeholder" th:unless="${book.coverImage != null}"
+                                 aria-hidden="true">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 7v14m0-14C9 4 5 4 3 5v14c2-1 6-1 9 2m0-14c3-3 7-3 9-2v14c-2-1-6-1-9 2"/>
+                                </svg>
+                            </div>
+                            <div class="reading-book-details">
+                                <span class="book-status">IN PROGRESS</span>
+                                <h3 th:text="${book.title}">Book title</h3>
+                                <p th:if="${book.author}" th:text="${book.author}">Author</p>
+                                <a class="primary-button" th:href="@{/reading-session}">Start a session</a>
+                            </div>
+                        </article>
+                        <div class="empty-reading" th:if="${#lists.isEmpty(readingBooks)}">
+                            <span class="empty-reading-icon" aria-hidden="true">✦</span>
+                            <div>
+                                <h3>Your next chapter starts here</h3>
+                                <p>Add a book to your reading list to see it here.</p>
+                            </div>
+                            <a class="secondary-button" th:href="@{/my-books}">Browse my books</a>
+                        </div>
+                    </div>
+
+                    <a class="session-card" th:href="@{/reading-session}">
+                        <span class="session-leaf" aria-hidden="true">✿</span>
+                        <span class="session-card-copy">
+                            <strong>Make time to read</strong>
+                            <span>A little progress goes a long way.</span>
+                        </span>
+                        <span class="session-card-action">Start reading <span aria-hidden="true">→</span></span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Show every book with its current reading status. -->
+            <section class="home-section books-section" aria-labelledby="my-books-heading">
+                <div class="section-heading">
+                    <div>
+                        <p class="section-kicker">A SHELF OF YOUR OWN</p>
+                        <h2 id="my-books-heading">My books</h2>
+                    </div>
+                    <a class="text-link" th:href="@{/my-books}">View library <span aria-hidden="true">→</span></a>
+                </div>
+
+                <div class="home-book-grid">
+                    <a class="home-book-card" th:each="book : ${books}" th:href="@{/my-books}">
+                        <img class="home-book-cover" th:if="${book.coverImage != null}"
                              th:src="@{/my-books/{id}/cover(id=${book.id})}"
                              th:alt="|Cover of ${book.title}|">
-                        <span th:text="${book.title}">Book title</span>
-                        <span th:if="${book.author}" th:text="|by ${book.author}|">by Author</span>
-                    </li>
-                </ul>
-                <p th:if="${#lists.isEmpty(books)}">No books added yet.</p>
+                        <div class="home-book-cover cover-placeholder" th:unless="${book.coverImage != null}"
+                             aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 7v14m0-14C9 4 5 4 3 5v14c2-1 6-1 9 2m0-14c3-3 7-3 9-2v14c-2-1-6-1-9 2"/>
+                            </svg>
+                        </div>
+                        <span class="home-book-title" th:text="${book.title}">Book title</span>
+                        <span class="home-book-author" th:if="${book.author}" th:text="${book.author}">Author</span>
+                        <span class="home-book-status"
+                              th:classappend="${book.status.name() == 'READING'} ? ' status-reading' : (${book.status.name() == 'COMPLETED'} ? ' status-completed' : ' status-to-read')"
+                              th:text="${book.status.name() == 'COMPLETED' ? 'Read' : (book.status.name() == 'READING' ? 'Reading' : 'Want to read')}">
+                            Want to read
+                        </span>
+                    </a>
+                    <p class="empty-books" th:if="${#lists.isEmpty(books)}">
+                        Your library is waiting for its first book.
+                        <a th:href="@{/my-books}">Add a book</a>
+                    </p>
+                </div>
             </section>
         </main>
     </div>
