@@ -11,9 +11,11 @@
 <body>
     <div class="page-layout">
         <div th:replace="~{fragments/Navigation :: NavigationModal('statistics')}"></div>
-        <main class="page-content home-page"
+        <main class="page-content home-page statistics-page"
               th:with="readingBooks=${books.?[status.name() == 'READING']},
-                       completedBooks=${books.?[status.name() == 'COMPLETED']}">
+                       completedBooks=${books.?[status.name() == 'COMPLETED']},
+                       toReadBooks=${books.?[status.name() == 'TO_READ']},
+                       totalBooks=${#lists.size(books) > 0 ? #lists.size(books) : 1}">
             <header class="home-header">
                 <div>
                     <h1>Statistics</h1>
@@ -50,6 +52,53 @@
                     </span>
                     <strong class="stat-value" th:text="${#lists.size(readingBooks)}">0</strong>
                     <span class="stat-label">Currently reading</span>
+                </article>
+            </section>
+
+            <section class="statistics-status home-section" aria-labelledby="reading-status-heading">
+                <h2 id="reading-status-heading">Reading status</h2>
+                <div class="statistics-status-list">
+                    <div class="statistics-status-item">
+                        <div class="statistics-status-label">
+                            <span id="reading-status-label">Reading</span>
+                            <strong th:text="${#lists.size(readingBooks)}">0</strong>
+                        </div>
+                        <!-- Thymeleaf sets max to all books and value to books in this status.
+                             The browser uses their ratio to determine how much of the bar is filled. -->
+                        <progress class="statistics-status-progress status-reading"
+                                  aria-labelledby="reading-status-label"
+                                  th:max="${totalBooks}" th:value="${#lists.size(readingBooks)}"></progress>
+                    </div>
+                    <div class="statistics-status-item">
+                        <div class="statistics-status-label">
+                            <span id="read-status-label">Read</span>
+                            <strong th:text="${#lists.size(completedBooks)}">0</strong>
+                        </div>
+                        <progress class="statistics-status-progress status-completed"
+                                  aria-labelledby="read-status-label"
+                                  th:max="${totalBooks}" th:value="${#lists.size(completedBooks)}"></progress>
+                    </div>
+                    <div class="statistics-status-item">
+                        <div class="statistics-status-label">
+                            <span id="to-read-status-label">Want to read</span>
+                            <strong th:text="${#lists.size(toReadBooks)}">0</strong>
+                        </div>
+                        <progress class="statistics-status-progress status-to-read"
+                                  aria-labelledby="to-read-status-label"
+                                  th:max="${totalBooks}" th:value="${#lists.size(toReadBooks)}"></progress>
+                    </div>
+                </div>
+            </section>
+
+            <section class="statistics-pages" aria-label="Pages read">
+                <article class="stat-card">
+                    <span class="stat-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"/>
+                        </svg>
+                    </span>
+                    <strong class="stat-value" th:text="${pagesRead}">0</strong>
+                    <span class="stat-label">Pages read</span>
                 </article>
             </section>
         </main>
