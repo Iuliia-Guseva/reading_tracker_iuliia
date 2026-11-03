@@ -21,8 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import reading_tracker.config.DefaultDataInitializer;
 import reading_tracker.domain.Book;
-import reading_tracker.domain.BookRepository;
 import reading_tracker.domain.BookStatus;
+import reading_tracker.repository.BookRepository;
 
 @Controller
 public class TrackerController {
@@ -58,8 +58,14 @@ public class TrackerController {
 
     @GetMapping("/statistics")
     public String statistics(Model model) {
+        List<Book> books = getBooks();
         model.addAttribute("sampleReadingSeconds", defaultDataInitializer.getDefaultReadingSeconds());
-        model.addAttribute("books", getBooks());
+        model.addAttribute("books", books);
+        model.addAttribute("pagesRead", books.stream()
+                .filter(book -> book.getStatus() == BookStatus.COMPLETED)
+                .filter(book -> book.getPages() != null && book.getPages() > 0)
+                .mapToInt(Book::getPages)
+                .sum());
         return "Statistics";
     }
 
@@ -129,6 +135,13 @@ public class TrackerController {
         savedBook.setPages(formBook.getPages());
         savedBook.setStatus(formBook.getStatus());
         bookRepository.save(savedBook);
+        return "redirect:/my-books";
+    }
+
+    @PostMapping("/my-books/{id}/delete")
+    public String deleteBook(@PathVariable Long id) {
+        Book book = findBook(id);
+        bookRepository.delete(book);
         return "redirect:/my-books";
     }
 

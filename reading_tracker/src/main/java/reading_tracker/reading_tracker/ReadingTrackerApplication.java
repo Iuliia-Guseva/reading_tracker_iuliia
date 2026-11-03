@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication(scanBasePackages = "reading_tracker")
 @EntityScan(basePackages = "reading_tracker.domain")
-@EnableJpaRepositories(basePackages = "reading_tracker.domain")
+@EnableJpaRepositories(basePackages = "reading_tracker.repository")
 public class ReadingTrackerApplication {
 
 	public static void main(String[] args) {

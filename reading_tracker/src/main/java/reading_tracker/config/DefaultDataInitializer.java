@@ -10,8 +10,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import reading_tracker.domain.Book;
-import reading_tracker.domain.BookRepository;
 import reading_tracker.domain.BookStatus;
+import reading_tracker.repository.BookRepository;
 
 @Component
 public class DefaultDataInitializer implements ApplicationRunner {

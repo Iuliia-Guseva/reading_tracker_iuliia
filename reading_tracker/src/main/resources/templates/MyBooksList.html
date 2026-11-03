@@ -65,8 +65,15 @@
                         </div>
                         <span class="book-page-count" th:if="${book.pages != null}"
                               th:text="|${book.pages} pages|">300 pages</span>
-                        <a class="book-edit-link" th:href="@{/my-books/{id}/edit(id=${book.id})}"
-                           th:attr="aria-label=|Edit ${book.title}|">Edit</a>
+                        <div class="book-list-actions">
+                            <a class="book-edit-link" th:href="@{/my-books/{id}/edit(id=${book.id})}"
+                               th:attr="aria-label=|Edit ${book.title}|">Edit</a>
+                            <form th:action="@{/my-books/{id}/delete(id=${book.id})}" method="post"
+                                  onsubmit="return confirm('Delete this book?');">
+                                <button class="book-delete-button" type="submit"
+                                        th:attr="aria-label=|Delete ${book.title}|">Delete</button>
+                            </form>
+                        </div>
                     </li>
                 </ul>
                 <p class="book-list-empty" th:if="${#lists.isEmpty(books)}">No books added yet.</p>

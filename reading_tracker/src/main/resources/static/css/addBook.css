@@ -500,6 +500,12 @@
     white-space: nowrap;
 }
 
+.book-list-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
 .book-edit-link {
     padding: 0.45rem 0.65rem;
     border-radius: 0.5rem;
@@ -507,6 +513,28 @@
     font-size: 0.85rem;
     font-weight: 600;
     text-decoration: none;
+}
+
+.book-list-actions form {
+    margin: 0;
+}
+
+.book-delete-button {
+    padding: 0.45rem 0.65rem;
+    border: 0;
+    border-radius: 0.5rem;
+    color: #a12622;
+    background: transparent;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.book-delete-button:hover,
+.book-delete-button:focus-visible {
+    color: #801b18;
+    background: #fae9e7;
 }
 
 .book-edit-link:hover,
@@ -577,9 +605,11 @@
         grid-row: 2;
     }
 
-    .book-edit-link {
+    .book-list-actions {
         grid-column: 3;
         grid-row: 1 / span 2;
+        align-items: flex-start;
+        flex-direction: column;
     }
 }
 
