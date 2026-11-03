@@ -3,16 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#263c36">
     <title>Statistics</title>
     <link rel="stylesheet" th:href="@{/css/navigation.css}">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
 </head>
 <body>
     <div class="page-layout">
         <div th:replace="~{fragments/Navigation :: NavigationModal('statistics')}"></div>
-        <main class="page-content">
-            <h1>Statistics</h1>
-            <p>Total reading time: <span id="total-reading-time"
-                    th:attr="data-sample-seconds=${sampleReadingSeconds}">00:00:00</span></p>
+        <main class="page-content home-page"
+              th:with="readingBooks=${books.?[status.name() == 'READING']},
+                       completedBooks=${books.?[status.name() == 'COMPLETED']}">
+            <header class="home-header">
+                <div>
+                    <h1>Statistics</h1>
+                </div>
+            </header>
+
+            <section class="home-stats" aria-label="Your reading statistics">
+                <article class="stat-card">
+                    <span class="stat-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="9"/>
+                            <path d="M12 7v5l3 2"/>
+                        </svg>
+                    </span>
+                    <strong class="stat-value" id="total-reading-time"
+                            th:attr="data-sample-seconds=${sampleReadingSeconds}">00:00:00</strong>
+                    <span class="stat-label">Total reading time</span>
+                </article>
+                <article class="stat-card">
+                    <span class="stat-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="m5 12 4 4L19 6"/>
+                            <circle cx="12" cy="12" r="10"/>
+                        </svg>
+                    </span>
+                    <strong class="stat-value" th:text="${#lists.size(completedBooks)}">0</strong>
+                    <span class="stat-label">Books read</span>
+                </article>
+                <article class="stat-card">
+                    <span class="stat-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 7v14m0-14C9 4 5 4 3 5v14c2-1 6-1 9 2m0-14c3-3 7-3 9-2v14c-2-1-6-1-9 2"/>
+                        </svg>
+                    </span>
+                    <strong class="stat-value" th:text="${#lists.size(readingBooks)}">0</strong>
+                    <span class="stat-label">Currently reading</span>
+                </article>
+            </section>
         </main>
     </div>
     <script>

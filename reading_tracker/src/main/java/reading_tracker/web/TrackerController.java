@@ -59,6 +59,7 @@ public class TrackerController {
     @GetMapping("/statistics")
     public String statistics(Model model) {
         model.addAttribute("sampleReadingSeconds", defaultDataInitializer.getDefaultReadingSeconds());
+        model.addAttribute("books", getBooks());
         return "Statistics";
     }
 
