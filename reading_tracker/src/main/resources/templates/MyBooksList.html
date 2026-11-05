@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" th:lang="${#locale.language}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Books</title>
+    <title th:text="#{books.title}">My Books</title>
     <link rel="stylesheet" th:href="@{/css/navigation.css}">
     <link rel="stylesheet" th:href="@{/css/addBook.css}">
 </head>
@@ -17,32 +17,32 @@
                         <svg class="books-heading-icon" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M12 7v14m0-14C9 4 5 4 3 5v14c2-1 6-1 9 2m0-14c3-3 7-3 9-2v14c-2-1-6-1-9 2"/>
                         </svg>
-                        My Books
+                        <span th:text="#{books.title}">My Books</span>
                     </h1>
                     <div class="books-toolbar">
                         <!-- Search the book list by title or author. -->
                         <label class="book-search">
-                            <span class="visually-hidden">Search books by title or author</span>
-                            <input id="book-search" type="search" placeholder="Search by title, author..."
+                            <span class="visually-hidden" th:text="#{books.searchLabel}">Search books by title or author</span>
+                            <input id="book-search" type="search" th:placeholder="#{books.searchPlaceholder}"
                                    autocomplete="off">
                         </label>
                         <button class="library-add-button" id="open-add-book" type="button">
-                            <span aria-hidden="true">+</span> Add book
+                            <span aria-hidden="true">+</span> <span th:text="#{books.add}">Add book</span>
                         </button>
                     </div>
                     <!-- These buttons filter the list by each book's reading status. -->
-                    <div class="book-filters" role="group" aria-label="Filter books by reading status">
+                    <div class="book-filters" role="group" th:attr="aria-label=#{books.filterLabel}">
                         <button class="book-filter is-active" type="button" data-filter="ALL" aria-pressed="true">
-                            All <span data-count="ALL">0</span>
+                            <span th:text="#{books.filter.all}">All</span> <span data-count="ALL">0</span>
                         </button>
                         <button class="book-filter" type="button" data-filter="READING" aria-pressed="false">
-                            Reading <span data-count="READING">0</span>
+                            <span th:text="#{books.filter.reading}">Reading</span> <span data-count="READING">0</span>
                         </button>
                         <button class="book-filter" type="button" data-filter="COMPLETED" aria-pressed="false">
-                            Read <span data-count="COMPLETED">0</span>
+                            <span th:text="#{books.filter.read}">Read</span> <span data-count="COMPLETED">0</span>
                         </button>
                         <button class="book-filter" type="button" data-filter="TO_READ" aria-pressed="false">
-                            Want to read <span data-count="TO_READ">0</span>
+                            <span th:text="#{books.filter.toRead}">Want to read</span> <span data-count="TO_READ">0</span>
                         </button>
                     </div>
                 </header>
@@ -51,33 +51,35 @@
                     <li class="book-list-item" th:each="book : ${books}" th:attr="data-status=${book.status}">
                         <img class="book-cover-thumbnail" th:if="${book.coverImage != null}"
                              th:src="@{/my-books/{id}/cover(id=${book.id})}"
-                             th:alt="|Cover of ${book.title}|">
+                             th:alt="#{books.coverAlt(${book.title})}">
                         <div class="book-cover-placeholder" th:unless="${book.coverImage != null}"
-                             aria-hidden="true">Book cover</div>
+                             aria-hidden="true" th:text="#{books.coverPlaceholder}">Book cover</div>
                         <div class="book-list-details">
                             <h2 class="book-list-title" th:text="${book.title}">Book title</h2>
                             <p class="book-list-author" th:if="${book.author}" th:text="${book.author}">Author</p>
                             <span class="book-status-badge"
                                   th:classappend="${book.status.name() == 'READING'} ? ' status-reading' : (${book.status.name() == 'COMPLETED'} ? ' status-completed' : ' status-to-read')"
-                                  th:text="${book.status.name() == 'COMPLETED' ? 'Read' : (book.status.name() == 'READING' ? 'Reading' : 'Want to read')}">
+                                  th:text="${#messages.msg(book.status.name() == 'COMPLETED' ? 'books.filter.read' : (book.status.name() == 'READING' ? 'books.filter.reading' : 'books.filter.toRead'))}">
                                 Reading
                             </span>
                         </div>
                         <span class="book-page-count" th:if="${book.pages != null}"
-                              th:text="|${book.pages} pages|">300 pages</span>
+                              th:text="#{books.pages(${book.pages})}">300 pages</span>
                         <div class="book-list-actions">
                             <a class="book-edit-link" th:href="@{/my-books/{id}/edit(id=${book.id})}"
-                               th:attr="aria-label=|Edit ${book.title}|">Edit</a>
+                               th:attr="aria-label=#{books.editAria(${book.title})}" th:text="#{books.edit}">Edit</a>
                             <form th:action="@{/my-books/{id}/delete(id=${book.id})}" method="post"
-                                  onsubmit="return confirm('Delete this book?');">
+                                  th:attr="data-confirm-message=#{books.confirmDelete}"
+                                  onsubmit="return confirm(this.dataset.confirmMessage);">
                                 <button class="book-delete-button" type="submit"
-                                        th:attr="aria-label=|Delete ${book.title}|">Delete</button>
+                                        th:attr="aria-label=#{books.deleteAria(${book.title})}"
+                                        th:text="#{books.delete}">Delete</button>
                             </form>
                         </div>
                     </li>
                 </ul>
-                <p class="book-list-empty" th:if="${#lists.isEmpty(books)}">No books added yet.</p>
-                <p class="book-list-empty" id="no-matching-books" hidden>No books match your search.</p>
+                <p class="book-list-empty" th:if="${#lists.isEmpty(books)}" th:text="#{books.empty}">No books added yet.</p>
+                <p class="book-list-empty" id="no-matching-books" hidden th:text="#{books.noSearchResults}">No books match your search.</p>
             </section>
         </main>
     </div>

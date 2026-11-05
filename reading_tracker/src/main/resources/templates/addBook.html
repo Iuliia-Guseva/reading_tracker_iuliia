@@ -3,19 +3,19 @@
 <th:block th:fragment="addBookModal">
     <dialog id="add-book-modal" aria-labelledby="add-book-title"
             th:attr="data-open=${editBookId != null or coverError != null}">
-        <button class="modal-back" type="button" aria-label="Back to my books"
+        <button class="modal-back" type="button" th:attr="aria-label=#{bookForm.backAria}"
                 onclick="document.getElementById('add-book-modal').close()">
-            <span aria-hidden="true">&larr;</span> Back
+            <span aria-hidden="true">&larr;</span> <span th:text="#{bookForm.back}">Back</span>
         </button>
 
         <!-- Live preview of the book being created  -->
-        <section class="book-preview" aria-label="Book preview">
+        <section class="book-preview" th:attr="aria-label=#{bookForm.previewAria}">
             <div class="cover-placeholder">
-                <img id="preview-cover" alt="Book cover"
+                <img id="preview-cover" th:attr="alt=#{bookForm.coverAlt},
+                     data-existing-src=@{/my-books/{id}/cover(id=${editBookId})}"
                      th:if="${editBookId != null and newBook.coverImage != null}"
-                     th:src="@{/my-books/{id}/cover(id=${editBookId})}"
-                     th:attr="data-existing-src=@{/my-books/{id}/cover(id=${editBookId})}">
-                <img id="preview-cover" alt="Selected book cover" hidden
+                     th:src="@{/my-books/{id}/cover(id=${editBookId})}">
+                <img id="preview-cover" th:attr="alt=#{bookForm.selectedCoverAlt}" hidden
                      th:unless="${editBookId != null and newBook.coverImage != null}">
                 <span id="cover-placeholder-text" aria-hidden="true"
                       th:style="${editBookId != null and newBook.coverImage != null} ? 'display: none' : ''">
@@ -23,16 +23,19 @@
                 </span>
             </div>
             <div class="preview-details">
-                <h2 id="add-book-title"><span id="preview-title">Book title</span></h2>
-                <p id="preview-author">Author</p>
-                <p class="preview-status"><span id="preview-status">To read</span></p>
+                <h2 id="add-book-title"><span id="preview-title" th:text="#{bookForm.titlePlaceholder}"
+                                             th:attr="data-empty-text=#{bookForm.titlePlaceholder}">Book title</span></h2>
+                <p id="preview-author" th:text="#{bookForm.authorPlaceholder}"
+                   th:attr="data-empty-text=#{bookForm.authorPlaceholder}">Author</p>
+                <p class="preview-status"><span id="preview-status" th:text="#{bookForm.status.toRead}">To read</span></p>
                 <p class="preview-meta">
                     <span class="preview-icon" aria-hidden="true">&#9638;</span>
-                    <span><span id="preview-pages">0</span> pages</span>
+                    <span><span id="preview-pages">0</span> <span th:text="#{bookForm.pages}">pages</span></span>
                 </p>
                 <p class="preview-meta">
                     <span class="preview-icon" aria-hidden="true">&#9711;</span>
-                    <span>Published <span id="preview-year">Not set</span></span>
+                    <span><span th:text="#{bookForm.published}">Published</span> <span id="preview-year"
+                            th:text="#{bookForm.yearNotSet}" th:attr="data-empty-text=#{bookForm.yearNotSet}">Not set</span></span>
                 </p>
             </div>
         </section>
@@ -42,49 +45,49 @@
         <!-- Form for entering book details  -->
         <form class="book-form" th:action="${bookFormAction}" th:object="${newBook}"
               method="post" enctype="multipart/form-data">
-            <h2 id="book-form-heading" th:text="${bookFormTitle}">Add book</h2>
+            <h2 id="book-form-heading" th:text="#{${bookFormTitle}}">Add book</h2>
 
-            <p class="cover-error full-width" th:if="${coverError}" th:text="${coverError}" role="alert"></p>
+            <p class="cover-error full-width" th:if="${coverError}" th:text="#{${coverError}}" role="alert"></p>
 
             <label class="field full-width" for="book-title">
-                Title
-                <input id="book-title" type="text" th:field="*{title}" placeholder="Enter the book title" required>
+                <span th:text="#{bookForm.title}">Title</span>
+                <input id="book-title" type="text" th:field="*{title}" th:placeholder="#{bookForm.titleInputPlaceholder}" required>
             </label>
 
             <label class="field full-width" for="book-author">
-                Author
-                <input id="book-author" type="text" th:field="*{author}" placeholder="Enter the author's name">
+                <span th:text="#{bookForm.author}">Author</span>
+                <input id="book-author" type="text" th:field="*{author}" th:placeholder="#{bookForm.authorInputPlaceholder}">
             </label>
 
             <label class="field" for="book-pages">
-                Pages
-                <input id="book-pages" type="number" min="1" th:field="*{pages}" placeholder="Number of pages">
+                <span th:text="#{bookForm.pagesLabel}">Pages</span>
+                <input id="book-pages" type="number" min="1" th:field="*{pages}" th:placeholder="#{bookForm.pagesInputPlaceholder}">
             </label>
 
             <label class="field" for="book-year">
-                Publication year
-                <input id="book-year" type="number" min="1" th:field="*{publicationYear}" placeholder="Year">
+                <span th:text="#{bookForm.publicationYear}">Publication year</span>
+                <input id="book-year" type="number" min="1" th:field="*{publicationYear}" th:placeholder="#{bookForm.yearInputPlaceholder}">
             </label>
 
             <!-- Book cover is optional; uploaded images are validated before saving. -->
             <label class="field full-width" for="book-cover">
-                Book cover
+                <span th:text="#{bookForm.cover}">Book cover</span>
                 <input id="book-cover" name="cover" type="file"
                        accept="image/jpeg,image/png,image/gif,image/webp">
             </label>
 
             <label class="field" for="book-status">
-                Status
+                <span th:text="#{bookForm.status}">Status</span>
                 <select id="book-status" th:field="*{status}">
                     <option th:each="status : ${bookStatuses}" th:value="${status}"
-                            th:text="${#strings.replace(status.name(), '_', ' ')}">To read</option>
+                            th:text="${#messages.msg(status.name() == 'TO_READ' ? 'bookForm.status.toRead' : (status.name() == 'READING' ? 'books.filter.reading' : 'books.filter.read'))}">To read</option>
                 </select>
             </label>
 
             <div class="modal-actions">
                 <button class="cancel-button" type="button"
-                        onclick="document.getElementById('add-book-modal').close()">Cancel</button>
-                <button class="save-button" type="submit">Save</button>
+                        onclick="document.getElementById('add-book-modal').close()" th:text="#{bookForm.cancel}">Cancel</button>
+                <button class="save-button" type="submit" th:text="#{bookForm.save}">Save</button>
             </div>
         </form>
     </dialog>
@@ -101,16 +104,16 @@
         }
 
         const previewFields = [
-            ["book-title", "preview-title", "Book title"],
-            ["book-author", "preview-author", "Author"],
-            ["book-pages", "preview-pages", "0"],
-            ["book-year", "preview-year", "Not set"]
+            ["book-title", "preview-title"],
+            ["book-author", "preview-author"],
+            ["book-pages", "preview-pages"],
+            ["book-year", "preview-year"]
         ];
-        previewFields.forEach(([inputId, previewId, emptyText]) => {
+        previewFields.forEach(([inputId, previewId]) => {
             const input = document.getElementById(inputId);
             const preview = document.getElementById(previewId);
             const updatePreview = () => {
-                preview.textContent = input.value || emptyText;
+                preview.textContent = input.value || preview.dataset.emptyText || "0";
             };
             input.addEventListener("input", updatePreview);
             updatePreview();

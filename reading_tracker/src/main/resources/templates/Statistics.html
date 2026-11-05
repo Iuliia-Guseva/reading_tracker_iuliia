@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" th:lang="${#locale.language}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#263c36">
-    <title>Statistics</title>
+    <title th:text="#{statistics.title}">Statistics</title>
     <link rel="stylesheet" th:href="@{/css/navigation.css}">
     <link rel="stylesheet" th:href="@{/css/home.css}">
 </head>
@@ -18,11 +18,11 @@
                        totalBooks=${#lists.size(books) > 0 ? #lists.size(books) : 1}">
             <header class="home-header">
                 <div>
-                    <h1>Statistics</h1>
+                    <h1 th:text="#{statistics.title}">Statistics</h1>
                 </div>
             </header>
 
-            <section class="home-stats" aria-label="Your reading statistics">
+            <section class="home-stats" th:attr="aria-label=#{statistics.readingAria}">
                 <article class="stat-card">
                     <span class="stat-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24">
@@ -32,7 +32,7 @@
                     </span>
                     <strong class="stat-value" id="total-reading-time"
                             th:attr="data-sample-seconds=${sampleReadingSeconds}">00:00:00</strong>
-                    <span class="stat-label">Total reading time</span>
+                    <span class="stat-label" th:text="#{statistics.totalReadingTime}">Total reading time</span>
                 </article>
                 <article class="stat-card">
                     <span class="stat-icon" aria-hidden="true">
@@ -42,7 +42,7 @@
                         </svg>
                     </span>
                     <strong class="stat-value" th:text="${#lists.size(completedBooks)}">0</strong>
-                    <span class="stat-label">Books read</span>
+                    <span class="stat-label" th:text="#{statistics.booksRead}">Books read</span>
                 </article>
                 <article class="stat-card">
                     <span class="stat-icon" aria-hidden="true">
@@ -51,16 +51,16 @@
                         </svg>
                     </span>
                     <strong class="stat-value" th:text="${#lists.size(readingBooks)}">0</strong>
-                    <span class="stat-label">Currently reading</span>
+                    <span class="stat-label" th:text="#{statistics.currentlyReading}">Currently reading</span>
                 </article>
             </section>
 
             <section class="statistics-status home-section" aria-labelledby="reading-status-heading">
-                <h2 id="reading-status-heading">Reading status</h2>
+                <h2 id="reading-status-heading" th:text="#{statistics.status}">Reading status</h2>
                 <div class="statistics-status-list">
                     <div class="statistics-status-item">
                         <div class="statistics-status-label">
-                            <span id="reading-status-label">Reading</span>
+                            <span id="reading-status-label" th:text="#{statistics.status.reading}">Reading</span>
                             <strong th:text="${#lists.size(readingBooks)}">0</strong>
                         </div>
                         <!-- Thymeleaf sets max to all books and value to books in this status.
@@ -71,7 +71,7 @@
                     </div>
                     <div class="statistics-status-item">
                         <div class="statistics-status-label">
-                            <span id="read-status-label">Read</span>
+                            <span id="read-status-label" th:text="#{statistics.status.read}">Read</span>
                             <strong th:text="${#lists.size(completedBooks)}">0</strong>
                         </div>
                         <progress class="statistics-status-progress status-completed"
@@ -80,7 +80,7 @@
                     </div>
                     <div class="statistics-status-item">
                         <div class="statistics-status-label">
-                            <span id="to-read-status-label">Want to read</span>
+                            <span id="to-read-status-label" th:text="#{statistics.status.toRead}">Want to read</span>
                             <strong th:text="${#lists.size(toReadBooks)}">0</strong>
                         </div>
                         <progress class="statistics-status-progress status-to-read"
@@ -90,7 +90,7 @@
                 </div>
             </section>
 
-            <section class="statistics-pages" aria-label="Pages read">
+            <section class="statistics-pages" th:attr="aria-label=#{statistics.pagesAria}">
                 <article class="stat-card">
                     <span class="stat-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24">
@@ -98,7 +98,7 @@
                         </svg>
                     </span>
                     <strong class="stat-value" th:text="${pagesRead}">0</strong>
-                    <span class="stat-label">Pages read</span>
+                    <span class="stat-label" th:text="#{statistics.pagesRead}">Pages read</span>
                 </article>
             </section>
         </main>

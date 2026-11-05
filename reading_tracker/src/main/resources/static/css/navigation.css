@@ -18,8 +18,11 @@ body {
 .navigation-panel {
     display: flex;
     flex: 0 0 4.5rem;
+    align-self: flex-start;
     flex-direction: column;
-    min-height: 100vh;
+    position: sticky;
+    top: 0;
+    height: 100vh;
     overflow: hidden;
     padding: 2rem 0.5rem 1.5rem;
     border-right: 1px solid rgb(38 60 54 / 25%);
@@ -136,11 +139,48 @@ body {
 
 .navigation-language {
     display: flex;
+    flex: 0 0 auto;
     align-items: center;
     justify-content: center;
     gap: 0;
     margin-top: auto;
     padding: 1rem 0 0;
+}
+
+.navigation-language svg,
+.navigation-language-option {
+    display: none;
+}
+
+.navigation-panel:hover .navigation-language svg,
+.navigation-panel:focus-within .navigation-language svg {
+    display: block;
+}
+
+.navigation-language-option {
+    flex: 0 0 1.5rem;
+    align-items: center;
+    justify-content: center;
+    height: 1.5rem;
+    color: inherit;
+    border: 0;
+    border-radius: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    opacity: 0;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 120ms ease;
+}
+
+.navigation-language-option:hover,
+.navigation-language-option:focus-visible {
+    background-color: rgb(38 60 54 / 6%);
+}
+
+.navigation-language-option[aria-current="true"] {
+    background-color: rgb(38 60 54 / 12%);
+    font-weight: 700;
 }
 
 .navigation-panel:hover .navigation-language,
@@ -151,9 +191,10 @@ body {
     padding-left: 0.5rem;
 }
 
-.navigation-language svg {
-    width: 1.75rem;
-    height: 1.75rem;
+.navigation-panel:hover .navigation-language-option,
+.navigation-panel:focus-within .navigation-language-option {
+    display: inline-flex;
+    opacity: 1;
 }
 
 .page-content {
@@ -183,7 +224,10 @@ body {
     }
 
     .navigation-panel {
+        align-self: stretch;
         flex: 0 0 auto;
+        position: static;
+        height: auto;
         min-height: auto;
         overflow: visible;
         padding: 1rem;
@@ -210,6 +254,17 @@ body {
         max-width: none;
         opacity: 1;
         transition: none;
+    }
+
+    .navigation-panel .navigation-language-option {
+        display: inline-flex;
+        max-width: 2rem;
+        opacity: 1;
+        transition: none;
+    }
+
+    .navigation-panel .navigation-language svg {
+        display: block;
     }
 
     .navigation-links {

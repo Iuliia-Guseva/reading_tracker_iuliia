@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" th:lang="${#locale.language}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#263c36">
-    <title>Reading session</title>
+    <title th:text="#{nav.readingSession}">Reading session</title>
     <link rel="stylesheet" th:href="@{/css/navigation.css}">
     <link rel="stylesheet" th:href="@{/css/reading_session.css}">
 </head>
@@ -12,8 +12,10 @@
     <div class="page-layout">
         <div th:replace="~{fragments/Navigation :: NavigationModal('reading-session')}"></div>
         <main class="reading-session">
-            <section class="session-focus" aria-label="Reading timer"
-                     th:attr="data-sample-reading-seconds=${sampleReadingSeconds}">
+            <section class="session-focus" th:attr="aria-label=#{session.timerAria},
+                     data-sample-reading-seconds=${sampleReadingSeconds},
+                     data-reading-label=#{session.reading},data-pause-label=#{session.pause},
+                     data-paused-label=#{session.paused},data-resume-label=#{session.resume}">
                 <div class="timer-face">
                     <!-- The circle and sprout are decorative parts of the timer design. -->
                     <svg class="timer-ring" viewBox="0 0 220 220" aria-hidden="true">
@@ -23,13 +25,13 @@
                         <svg class="sprout-icon" viewBox="0 0 32 32" aria-hidden="true">
                             <path d="M16 27V15m0 5c-6 0-9-3-9-9 6 0 9 3 9 9Zm0-5c0-6 3-9 9-9 0 6-3 9-9 9ZM11 28h10"/>
                         </svg>
-                        <p class="timer" id="timer" role="timer" aria-label="Elapsed reading time">00:00:00</p>
-                        <p class="session-status" id="session-status" aria-live="polite">Ready to read</p>
+                        <p class="timer" id="timer" role="timer" th:attr="aria-label=#{session.elapsedTimeAria}">00:00:00</p>
+                        <p class="session-status" id="session-status" aria-live="polite" th:text="#{session.ready}">Ready to read</p>
                     </div>
                 </div>
 
                 <button class="session-control" id="session-control" type="button" aria-pressed="false">
-                    <span id="control-label">Start reading</span>
+                    <span id="control-label" th:text="#{session.start}">Start reading</span>
                 </button>
             </section>
         </main>
@@ -41,11 +43,12 @@
             const status = document.getElementById("session-status");
             const control = document.getElementById("session-control");
             const controlLabel = document.getElementById("control-label");
+            const sessionFocus = document.querySelector(".session-focus");
 
             const totalReadingTimeStorageKey = "readingTrackerTotalSeconds";
             const storedValue = localStorage.getItem(totalReadingTimeStorageKey);
             const sampleReadingSeconds = Number(
-                document.querySelector(".session-focus").dataset.sampleReadingSeconds
+                sessionFocus.dataset.sampleReadingSeconds
             );
             const storedTotalReadingSeconds = Number(storedValue);
             let totalReadingSeconds =
@@ -91,8 +94,8 @@
                     showTime();
                 }, 1000);
 
-                status.textContent = "Reading...";
-                controlLabel.textContent = "Pause";
+                status.textContent = sessionFocus.dataset.readingLabel;
+                controlLabel.textContent = sessionFocus.dataset.pauseLabel;
                 control.setAttribute("aria-pressed", "true");
                 control.classList.add("is-running");
             }
@@ -102,8 +105,8 @@
                 clearInterval(timerInterval);
                 timerInterval = null;
 
-                status.textContent = "Paused";
-                controlLabel.textContent = "Resume reading";
+                status.textContent = sessionFocus.dataset.pausedLabel;
+                controlLabel.textContent = sessionFocus.dataset.resumeLabel;
                 control.setAttribute("aria-pressed", "false");
                 control.classList.remove("is-running");
             }

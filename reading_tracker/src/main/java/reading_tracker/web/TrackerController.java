@@ -97,8 +97,7 @@ public class TrackerController {
             // Check the size and actual image signature before saving the uploaded file.
             if (!isValidCover(image, contentType)) {
                 prepareMyBooksPage(model, book);
-                model.addAttribute("coverError",
-                        "Choose a JPEG, PNG, GIF or WebP image smaller than 5 MB.");
+                model.addAttribute("coverError", "bookForm.coverError");
                 return "MyBooksList";
             }
             book.setCoverImage(image);
@@ -120,8 +119,7 @@ public class TrackerController {
             String contentType = cover.getContentType();
             if (!isValidCover(image, contentType)) {
                 prepareEditPage(model, formBook, savedBook);
-                model.addAttribute("coverError",
-                        "Choose a JPEG, PNG, GIF or WebP image smaller than 5 MB.");
+                model.addAttribute("coverError", "bookForm.coverError");
                 return "MyBooksList";
             }
             savedBook.setCoverImage(image);
@@ -167,7 +165,7 @@ public class TrackerController {
         model.addAttribute("newBook", newBook);
         model.addAttribute("bookStatuses", BookStatus.values());
         model.addAttribute("bookFormAction", "/my-books");
-        model.addAttribute("bookFormTitle", "Add book");
+        model.addAttribute("bookFormTitle", "bookForm.addTitle");
     }
 
     private void prepareEditPage(Model model, Book formBook, Book savedBook) {
@@ -178,7 +176,7 @@ public class TrackerController {
         formBook.setCoverContentType(savedBook.getCoverContentType());
         model.addAttribute("editBookId", savedBook.getId());
         model.addAttribute("bookFormAction", "/my-books/" + savedBook.getId() + "/edit");
-        model.addAttribute("bookFormTitle", "Edit book");
+        model.addAttribute("bookFormTitle", "bookForm.editTitle");
     }
 
     private Book findBook(Long id) {

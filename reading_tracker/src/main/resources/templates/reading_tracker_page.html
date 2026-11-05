@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" th:lang="${#locale.language}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reading Tracker</title>
+    <title th:text="#{app.title}">Reading Tracker</title>
     <link rel="stylesheet" th:href="@{/css/navigation.css}">
     <link rel="stylesheet" th:href="@{/css/home.css}">
 </head>
@@ -15,14 +15,14 @@
                        completedBooks=${books.?[status.name() == 'COMPLETED']}">
             <header class="home-header">
                 <div>
-                    <p class="home-eyebrow">YOUR PERSONAL READING SPACE</p>
-                    <h1>Good afternoon, reader <span aria-hidden="true">☀</span></h1>
-                    <p class="home-subtitle">What will you read today?</p>
+                    <p class="home-eyebrow" th:text="#{home.eyebrow}">YOUR PERSONAL READING SPACE</p>
+                    <h1><span th:text="#{home.greeting}">Good afternoon, reader</span> <span aria-hidden="true">☀</span></h1>
+                    <p class="home-subtitle" th:text="#{home.subtitle}">What will you read today?</p>
                 </div>
             </header>
 
             <!-- Show a quick summary of the reading library. -->
-            <section class="home-stats" aria-label="Your reading at a glance">
+            <section class="home-stats" th:attr="aria-label=#{home.readingSummary}">
                 <article class="stat-card">
                     <span class="stat-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24">
@@ -30,7 +30,7 @@
                         </svg>
                     </span>
                     <strong class="stat-value" th:text="${#lists.size(books)}">0</strong>
-                    <span class="stat-label">Total books</span>
+                    <span class="stat-label" th:text="#{home.totalBooks}">Total books</span>
                 </article>
                 <article class="stat-card">
                     <span class="stat-icon" aria-hidden="true">
@@ -40,7 +40,7 @@
                         </svg>
                     </span>
                     <strong class="stat-value" th:text="${#lists.size(readingBooks)}">0</strong>
-                    <span class="stat-label">Currently reading</span>
+                    <span class="stat-label" th:text="#{home.currentlyReading}">Currently reading</span>
                 </article>
                 <article class="stat-card">
                     <span class="stat-icon" aria-hidden="true">
@@ -50,7 +50,7 @@
                         </svg>
                     </span>
                     <strong class="stat-value" th:text="${#lists.size(completedBooks)}">0</strong>
-                    <span class="stat-label">Books completed</span>
+                    <span class="stat-label" th:text="#{home.booksCompleted}">Books completed</span>
                 </article>
             </section>
 
@@ -58,10 +58,10 @@
             <section class="home-section" aria-labelledby="currently-reading-heading">
                 <div class="section-heading">
                     <div>
-                        <p class="section-kicker">PICK UP WHERE YOU LEFT OFF</p>
-                        <h2 id="currently-reading-heading">Currently reading</h2>
+                        <p class="section-kicker" th:text="#{home.pickUp}">PICK UP WHERE YOU LEFT OFF</p>
+                        <h2 id="currently-reading-heading" th:text="#{home.currentlyReading}">Currently reading</h2>
                     </div>
-                    <a class="text-link" th:href="@{/my-books}">See all <span aria-hidden="true">→</span></a>
+                    <a class="text-link" th:href="@{/my-books}"><span th:text="#{home.seeAll}">See all</span> <span aria-hidden="true">→</span></a>
                 </div>
 
                 <div class="reading-overview">
@@ -69,7 +69,7 @@
                         <article class="reading-book-card" th:each="book : ${readingBooks}">
                             <img class="reading-book-cover" th:if="${book.coverImage != null}"
                                  th:src="@{/my-books/{id}/cover(id=${book.id})}"
-                                 th:alt="|Cover of ${book.title}|">
+                                 th:alt="#{books.coverAlt(${book.title})}">
                             <div class="reading-book-cover cover-placeholder" th:unless="${book.coverImage != null}"
                                  aria-hidden="true">
                                 <svg viewBox="0 0 24 24">
@@ -77,29 +77,29 @@
                                 </svg>
                             </div>
                             <div class="reading-book-details">
-                                <span class="book-status">IN PROGRESS</span>
+                                <span class="book-status" th:text="#{home.inProgress}">IN PROGRESS</span>
                                 <h3 th:text="${book.title}">Book title</h3>
                                 <p th:if="${book.author}" th:text="${book.author}">Author</p>
-                                <a class="primary-button" th:href="@{/reading-session}">Start a session</a>
+                                <a class="primary-button" th:href="@{/reading-session}" th:text="#{home.startSession}">Start a session</a>
                             </div>
                         </article>
                         <div class="empty-reading" th:if="${#lists.isEmpty(readingBooks)}">
                             <span class="empty-reading-icon" aria-hidden="true">✦</span>
                             <div>
-                                <h3>Your next chapter starts here</h3>
-                                <p>Add a book to your reading list to see it here.</p>
+                                <h3 th:text="#{home.nextChapter}">Your next chapter starts here</h3>
+                                <p th:text="#{home.addToReadingList}">Add a book to your reading list to see it here.</p>
                             </div>
-                            <a class="secondary-button" th:href="@{/my-books}">Browse my books</a>
+                            <a class="secondary-button" th:href="@{/my-books}" th:text="#{home.browseBooks}">Browse my books</a>
                         </div>
                     </div>
 
                     <a class="session-card" th:href="@{/reading-session}">
                         <span class="session-leaf" aria-hidden="true">✿</span>
                         <span class="session-card-copy">
-                            <strong>Make time to read</strong>
-                            <span>A little progress goes a long way.</span>
+                            <strong th:text="#{home.makeTime}">Make time to read</strong>
+                            <span th:text="#{home.progress}">A little progress goes a long way.</span>
                         </span>
-                        <span class="session-card-action">Start reading <span aria-hidden="true">→</span></span>
+                        <span class="session-card-action"><span th:text="#{home.startReading}">Start reading</span> <span aria-hidden="true">→</span></span>
                     </a>
                 </div>
             </section>
@@ -108,17 +108,17 @@
             <section class="home-section books-section" aria-labelledby="my-books-heading">
                 <div class="section-heading">
                     <div>
-                        <p class="section-kicker">A SHELF OF YOUR OWN</p>
-                        <h2 id="my-books-heading">My books</h2>
+                        <p class="section-kicker" th:text="#{home.bookshelf}">A SHELF OF YOUR OWN</p>
+                        <h2 id="my-books-heading" th:text="#{home.myBooks}">My books</h2>
                     </div>
-                    <a class="text-link" th:href="@{/my-books}">View library <span aria-hidden="true">→</span></a>
+                    <a class="text-link" th:href="@{/my-books}"><span th:text="#{home.viewLibrary}">View library</span> <span aria-hidden="true">→</span></a>
                 </div>
 
                 <div class="home-book-grid">
                     <a class="home-book-card" th:each="book : ${books}" th:href="@{/my-books}">
                         <img class="home-book-cover" th:if="${book.coverImage != null}"
                              th:src="@{/my-books/{id}/cover(id=${book.id})}"
-                             th:alt="|Cover of ${book.title}|">
+                             th:alt="#{books.coverAlt(${book.title})}">
                         <div class="home-book-cover cover-placeholder" th:unless="${book.coverImage != null}"
                              aria-hidden="true">
                             <svg viewBox="0 0 24 24">
@@ -129,13 +129,13 @@
                         <span class="home-book-author" th:if="${book.author}" th:text="${book.author}">Author</span>
                         <span class="home-book-status"
                               th:classappend="${book.status.name() == 'READING'} ? ' status-reading' : (${book.status.name() == 'COMPLETED'} ? ' status-completed' : ' status-to-read')"
-                              th:text="${book.status.name() == 'COMPLETED' ? 'Read' : (book.status.name() == 'READING' ? 'Reading' : 'Want to read')}">
+                              th:text="${#messages.msg(book.status.name() == 'COMPLETED' ? 'home.status.read' : (book.status.name() == 'READING' ? 'home.status.reading' : 'home.status.toRead'))}">
                             Want to read
                         </span>
                     </a>
                     <p class="empty-books" th:if="${#lists.isEmpty(books)}">
-                        Your library is waiting for its first book.
-                        <a th:href="@{/my-books}">Add a book</a>
+                        <span th:text="#{home.emptyLibrary}">Your library is waiting for its first book.</span>
+                        <a th:href="@{/my-books}" th:text="#{home.addBook}">Add a book</a>
                     </p>
                 </div>
             </section>
