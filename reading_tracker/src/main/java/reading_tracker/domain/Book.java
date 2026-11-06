@@ -22,6 +22,10 @@ public class Book {
     @Enumerated (EnumType.STRING)
     private BookStatus status;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
+
 
     public Book(String title, String author, Integer publicationYear, Integer pages,
         Integer rating, boolean favorite, BookStatus status){
@@ -73,6 +77,9 @@ public class Book {
     public String getCoverContentType(){
         return coverContentType;
     }
+    public User getOwner(){
+        return owner;
+    }
     //setter: updates the field value
     public void setId(Long id){
         this.id = id;
@@ -103,5 +110,8 @@ public class Book {
     }
     public void setCoverContentType(String coverContentType){
         this.coverContentType = coverContentType;
+    }
+    public void setOwner(User owner){
+        this.owner = owner;
     }
 }

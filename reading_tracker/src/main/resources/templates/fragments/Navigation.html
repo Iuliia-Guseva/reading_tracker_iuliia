@@ -51,6 +51,15 @@
             </a>
         </nav>
 
+        <form class="navigation-logout" th:action="@{/logout}" method="post">
+            <button class="navigation-link" type="submit">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M10 17l5-5-5-5m5 5H3m9-9h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7"/>
+                </svg>
+                <span th:text="#{auth.logout}">Sign out</span>
+            </button>
+        </form>
+
         <div class="navigation-language" th:attr="aria-label=#{nav.language}">
             <svg viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="12" cy="12" r="9"/>

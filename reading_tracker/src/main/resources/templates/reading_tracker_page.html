@@ -16,7 +16,7 @@
             <header class="home-header">
                 <div>
                     <p class="home-eyebrow" th:text="#{home.eyebrow}">YOUR PERSONAL READING SPACE</p>
-                    <h1><span th:text="#{home.greeting}">Good afternoon, reader</span> <span aria-hidden="true">☀</span></h1>
+                    <h1><span th:text="#{home.greeting(${username})}">Good afternoon, reader</span> <span aria-hidden="true">☀</span></h1>
                     <p class="home-subtitle" th:text="#{home.subtitle}">What will you read today?</p>
                 </div>
             </header>

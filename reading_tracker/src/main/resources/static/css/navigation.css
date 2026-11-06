@@ -97,6 +97,10 @@ body {
     gap: 0.5rem;
 }
 
+.navigation-logout {
+    margin: 0;
+}
+
 .navigation-link {
     display: flex;
     min-height: 3.5rem;
@@ -110,6 +114,14 @@ body {
     font-size: 1rem;
     font-weight: 600;
     text-decoration: none;
+}
+
+.navigation-logout .navigation-link {
+    width: 100%;
+    background: transparent;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
 }
 
 .navigation-panel:hover .navigation-link,

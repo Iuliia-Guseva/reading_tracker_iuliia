@@ -1,7 +1,7 @@
 package reading_tracker.web;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.security.Principal;
 import java.util.List;
 import java.util.Set;
 
@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,9 +23,12 @@ import org.springframework.web.multipart.MultipartFile;
 import reading_tracker.config.DefaultDataInitializer;
 import reading_tracker.domain.Book;
 import reading_tracker.domain.BookStatus;
+import reading_tracker.domain.User;
 import reading_tracker.repository.BookRepository;
+import reading_tracker.repository.UserRepository;
 
 @Controller
+@PreAuthorize("hasRole('USER')")
 public class TrackerController {
 
     private static final int MAX_COVER_SIZE = 5 * 1024 * 1024;
@@ -32,10 +36,13 @@ public class TrackerController {
             "image/jpeg", "image/png", "image/gif", "image/webp");
 
     private final BookRepository bookRepository;
+    private final UserRepository userRepository;
     private final DefaultDataInitializer defaultDataInitializer;
 
-    public TrackerController(BookRepository bookRepository, DefaultDataInitializer defaultDataInitializer) {
+    public TrackerController(BookRepository bookRepository, UserRepository userRepository,
+                             DefaultDataInitializer defaultDataInitializer) {
         this.bookRepository = bookRepository;
+        this.userRepository = userRepository;
         this.defaultDataInitializer = defaultDataInitializer;
     }
 
@@ -45,8 +52,10 @@ public class TrackerController {
     }
     
     @GetMapping("/tracker")
-    public String main_page(Model model) {
-        model.addAttribute("books", getBooks());
+    public String main_page(Model model, Principal principal) {
+        String username = principal.getName();
+        model.addAttribute("username", username);
+        model.addAttribute("books", getBooks(username));
         return "reading_tracker_page";
     }
 
@@ -57,8 +66,8 @@ public class TrackerController {
     }
 
     @GetMapping("/statistics")
-    public String statistics(Model model) {
-        List<Book> books = getBooks();
+    public String statistics(Model model, Principal principal) {
+        List<Book> books = getBooks(principal.getName());
         model.addAttribute("sampleReadingSeconds", defaultDataInitializer.getDefaultReadingSeconds());
         model.addAttribute("books", books);
         model.addAttribute("pagesRead", books.stream()
@@ -75,34 +84,36 @@ public class TrackerController {
     }
     
     @GetMapping("/my-books")
-    public String myBooks(Model model) {
-        prepareMyBooksPage(model, new Book());
+    public String myBooks(Model model, Principal principal) {
+        prepareMyBooksPage(model, new Book(), principal.getName());
         return "MyBooksList";
     }
 
     @GetMapping("/my-books/{id}/edit")
-    public String editBookPage(@PathVariable Long id, Model model) {
-        Book book = findBook(id);
-        prepareEditPage(model, book, book);
+    public String editBookPage(@PathVariable Long id, Model model, Principal principal) {
+        Book book = findBook(id, principal.getName());
+        prepareEditPage(model, book, book, principal.getName());
         return "MyBooksList";
     }
 
     @PostMapping("/my-books")
     public String addBook(@ModelAttribute("newBook") Book book,
                           @RequestParam(name = "cover", required = false) MultipartFile cover,
-                          Model model) throws IOException {
+                          Model model, Principal principal) throws IOException {
         if (cover != null && !cover.isEmpty()) {
             byte[] image = cover.getBytes();
             String contentType = cover.getContentType();
             // Check the size and actual image signature before saving the uploaded file.
             if (!isValidCover(image, contentType)) {
-                prepareMyBooksPage(model, book);
+                prepareMyBooksPage(model, book, principal.getName());
                 model.addAttribute("coverError", "bookForm.coverError");
                 return "MyBooksList";
             }
             book.setCoverImage(image);
             book.setCoverContentType(contentType);
         }
+        book.setId(null);
+        book.setOwner(findUser(principal.getName()));
         bookRepository.save(book);
         return "redirect:/my-books";
     }
@@ -111,14 +122,14 @@ public class TrackerController {
     public String updateBook(@PathVariable Long id,
                              @ModelAttribute("newBook") Book formBook,
                              @RequestParam(name = "cover", required = false) MultipartFile cover,
-                             Model model) throws IOException {
-        Book savedBook = findBook(id);
+                             Model model, Principal principal) throws IOException {
+        Book savedBook = findBook(id, principal.getName());
         // Keep the saved cover unless a valid replacement was uploaded.
         if (cover != null && !cover.isEmpty()) {
             byte[] image = cover.getBytes();
             String contentType = cover.getContentType();
             if (!isValidCover(image, contentType)) {
-                prepareEditPage(model, formBook, savedBook);
+                prepareEditPage(model, formBook, savedBook, principal.getName());
                 model.addAttribute("coverError", "bookForm.coverError");
                 return "MyBooksList";
             }
@@ -137,15 +148,15 @@ public class TrackerController {
     }
 
     @PostMapping("/my-books/{id}/delete")
-    public String deleteBook(@PathVariable Long id) {
-        Book book = findBook(id);
+    public String deleteBook(@PathVariable Long id, Principal principal) {
+        Book book = findBook(id, principal.getName());
         bookRepository.delete(book);
         return "redirect:/my-books";
     }
 
     @GetMapping("/my-books/{id}/cover")
-    public ResponseEntity<byte[]> bookCover(@PathVariable Long id) {
-        Book book = findBook(id);
+    public ResponseEntity<byte[]> bookCover(@PathVariable Long id, Principal principal) {
+        Book book = findBook(id, principal.getName());
         // Return stored image bytes using their validated media type.
         if (book.getCoverImage() == null || book.getCoverContentType() == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -157,8 +168,8 @@ public class TrackerController {
                 .body(book.getCoverImage());
     }
 
-    private void prepareMyBooksPage(Model model, Book newBook) {
-        model.addAttribute("books", getBooks());
+    private void prepareMyBooksPage(Model model, Book newBook, String username) {
+        model.addAttribute("books", getBooks(username));
         if (newBook.getStatus() == null) {
             newBook.setStatus(BookStatus.TO_READ);
         }
@@ -168,8 +179,8 @@ public class TrackerController {
         model.addAttribute("bookFormTitle", "bookForm.addTitle");
     }
 
-    private void prepareEditPage(Model model, Book formBook, Book savedBook) {
-        prepareMyBooksPage(model, formBook);
+    private void prepareEditPage(Model model, Book formBook, Book savedBook, String username) {
+        prepareMyBooksPage(model, formBook, username);
         formBook.setId(savedBook.getId());
         // Restore the saved cover for the edit preview and after validation errors.
         formBook.setCoverImage(savedBook.getCoverImage());
@@ -179,9 +190,14 @@ public class TrackerController {
         model.addAttribute("bookFormTitle", "bookForm.editTitle");
     }
 
-    private Book findBook(Long id) {
-        return bookRepository.findById(id)
+    private Book findBook(Long id, String username) {
+        return bookRepository.findByIdAndOwner_Username(id, username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    private User findUser(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
     }
 
     private boolean isValidCover(byte[] image, String contentType) {
@@ -214,9 +230,7 @@ public class TrackerController {
         };
     }
 
-    private List<Book> getBooks() {
-        List<Book> books = new ArrayList<>();
-        bookRepository.findAll().forEach(books::add);
-        return books;
+    private List<Book> getBooks(String username) {
+        return bookRepository.findAllByOwner_Username(username);
     }
 }

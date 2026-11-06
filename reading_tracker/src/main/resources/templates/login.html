@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" th:lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{auth.loginTitle}">Sign in</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+</head>
+<body class="auth-screen">
+    <main class="auth-page" th:classappend="${showLoginForm} ? ' auth-page--form'">
+        <section class="auth-hero" th:unless="${showLoginForm}" aria-labelledby="auth-heading">
+            <svg class="auth-book-icon" viewBox="0 0 64 64" aria-hidden="true">
+                <path d="M32 17c-8-7-17-7-25-3v34c8-4 17-4 25 3m0-34c8-7 17-7 25-3v34c-8-4-17-4-25 3m0-34v34"/>
+                <path d="M14 23c5-1 10 0 14 3m-14 6c5-1 10 0 14 3m22-12c-5-1-10 0-14 3m14 6c-5-1-10 0-14 3"/>
+            </svg>
+            <h1 id="auth-heading" th:text="#{auth.brand}">Reading Tracker</h1>
+        </section>
+
+        <section class="auth-card" th:if="${showLoginForm}" aria-labelledby="auth-login-heading">
+            <a class="auth-brand" th:href="@{/login}" th:text="#{auth.brand}">Reading Tracker</a>
+            <h1 id="auth-login-heading" th:text="#{auth.loginHeading}">Welcome back</h1>
+            <p class="auth-message auth-message--error" th:if="${param.error}" th:text="#{auth.loginError}">
+                Invalid username or password.
+            </p>
+            <form th:action="@{/login}" method="post">
+                <label for="username" th:text="#{auth.username}">Username</label>
+                <input id="username" name="username" type="text" autocomplete="username" required autofocus>
+                <label for="password" th:text="#{auth.password}">Password</label>
+                <input id="password" name="password" type="password" autocomplete="current-password" required>
+                <button class="auth-button auth-button--primary" type="submit" th:text="#{auth.loginButton}">Log in</button>
+            </form>
+            <a class="auth-back-link" th:href="@{/login}" th:text="#{auth.back}">Back</a>
+        </section>
+
+        <p class="auth-notice" th:if="${loggedOut}" th:text="#{auth.loggedOut}">You have signed out.</p>
+        <p class="auth-notice" th:if="${param.registered}" th:text="#{auth.registered}">
+            Account created. You can now sign in.
+        </p>
+
+        <nav class="auth-actions" th:unless="${showLoginForm}" th:attr="aria-label=#{auth.accountActions}">
+            <a class="auth-button auth-button--primary" th:href="@{/login(form=1)}"
+               th:text="#{auth.loginButton}">Log in</a>
+            <a class="auth-button auth-button--secondary" th:href="@{/signup}"
+               th:text="#{auth.signupButton}">Sign up</a>
+        </nav>
+
+        <div class="auth-language" th:attr="aria-label=#{auth.languageLabel}">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"/>
+                <path d="M3 12h18M12 3a15 15 0 0 1 0 18m0-18a15 15 0 0 0 0 18"/>
+            </svg>
+            <span th:text="#{nav.currentLanguage}">English</span>
+            <span class="auth-language-options">
+                <a href="?lang=en" th:attr="aria-label=#{nav.switchToEnglish}">EN</a>
+                <a href="?lang=fi" th:attr="aria-label=#{nav.switchToFinnish}">FI</a>
+            </span>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" th:lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{auth.signupTitle}">Create account</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+</head>
+<body class="auth-screen">
+    <main class="auth-page auth-page--form">
+        <section class="auth-card" aria-labelledby="auth-signup-heading">
+            <a class="auth-brand" th:href="@{/login}" th:text="#{auth.brand}">Reading Tracker</a>
+            <h1 id="auth-signup-heading" th:text="#{auth.signupHeading}">Create your account</h1>
+            <form th:action="@{/signup}" th:object="${registrationForm}" method="post">
+                <label for="username" th:text="#{auth.username}">Username</label>
+                <input id="username" th:field="*{username}" type="text" autocomplete="username" required>
+                <p class="field-error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></p>
+
+                <label for="email" th:text="#{auth.email}">Email (optional)</label>
+                <input id="email" th:field="*{email}" type="email" autocomplete="email">
+                <p class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+
+                <label for="password" th:text="#{auth.password}">Password</label>
+                <input id="password" th:field="*{password}" type="password" autocomplete="new-password" required>
+                <p class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+
+                <button class="auth-button auth-button--primary" type="submit" th:text="#{auth.signupButton}">Sign up</button>
+            </form>
+            <p class="auth-footer">
+                <span th:text="#{auth.haveAccount}">Already registered?</span>
+                <a th:href="@{/login(form=1)}" th:text="#{auth.loginLink}">Sign in</a>
+            </p>
+        </section>
+        <div class="auth-language" th:attr="aria-label=#{auth.languageLabel}">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"/>
+                <path d="M3 12h18M12 3a15 15 0 0 1 0 18m0-18a15 15 0 0 0 0 18"/>
+            </svg>
+            <span th:text="#{nav.currentLanguage}">English</span>
+            <span class="auth-language-options">
+                <a href="?lang=en" th:attr="aria-label=#{nav.switchToEnglish}">EN</a>
+                <a href="?lang=fi" th:attr="aria-label=#{nav.switchToFinnish}">FI</a>
+            </span>
+        </div>
+    </main>
+</body>
+</html>
