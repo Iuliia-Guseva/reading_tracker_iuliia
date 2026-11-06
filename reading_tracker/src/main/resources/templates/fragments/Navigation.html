@@ -41,14 +41,6 @@
                 </svg>
                 <span th:text="#{nav.statistics}">Statistics</span>
             </a>
-            <a class="navigation-link" th:href="@{/settings}"
-               th:attr="aria-current=${activePage == 'settings' ? 'page' : null}">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="m10 2-.5 2.2a8 8 0 0 0-1.8 1L5.6 4.3 3.3 6.6l.9 2.1a8 8 0 0 0-.5 2L1.5 12v3l2.2.5a8 8 0 0 0 1 1.8l-.9 2.1 2.3 2.3 2.1-.9a8 8 0 0 0 2 .5L11 23h3l.5-2.2a8 8 0 0 0 1.8-1l2.1.9 2.3-2.3-.9-2.1a8 8 0 0 0 .5-2l2.2-.5v-3l-2.2-.5a8 8 0 0 0-1-1.8l.9-2.1-2.3-2.3-2.1.9a8 8 0 0 0-2-.5L14 2z"/>
-                    <circle cx="12.5" cy="13.5" r="3"/>
-                </svg>
-                <span th:text="#{nav.settings}">Settings</span>
-            </a>
         </nav>
 
         <form class="navigation-logout" th:action="@{/logout}" method="post">

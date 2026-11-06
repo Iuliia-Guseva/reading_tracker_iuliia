@@ -78,11 +78,6 @@ public class TrackerController {
         return "Statistics";
     }
 
-    @GetMapping("/settings")
-    public String settings() {
-        return "Settings";
-    }
-    
     @GetMapping("/my-books")
     public String myBooks(Model model, Principal principal) {
         prepareMyBooksPage(model, new Book(), principal.getName());
