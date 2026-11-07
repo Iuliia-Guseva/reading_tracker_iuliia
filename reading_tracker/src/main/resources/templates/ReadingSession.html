@@ -15,7 +15,8 @@
             <section class="session-focus" th:attr="aria-label=#{session.timerAria},
                      data-sample-reading-seconds=${sampleReadingSeconds},
                      data-reading-label=#{session.reading},data-pause-label=#{session.pause},
-                     data-paused-label=#{session.paused},data-resume-label=#{session.resume}">
+                     data-paused-label=#{session.paused},data-resume-label=#{session.resume},
+                     data-ready-label=#{session.ready},data-start-label=#{session.start}">
                 <div class="timer-face">
                     <!-- The circle and sprout are decorative parts of the timer design. -->
                     <svg class="timer-ring" viewBox="0 0 220 220" aria-hidden="true">
@@ -30,9 +31,13 @@
                     </div>
                 </div>
 
-                <button class="session-control" id="session-control" type="button" aria-pressed="false">
-                    <span id="control-label" th:text="#{session.start}">Start reading</span>
-                </button>
+                <div class="session-controls">
+                    <button class="session-control" id="session-control" type="button" aria-pressed="false">
+                        <span id="control-label" th:text="#{session.start}">Start reading</span>
+                    </button>
+                    <button class="session-control session-control--stop" id="stop-control" type="button" disabled
+                            th:text="#{session.stop}">Stop reading</button>
+                </div>
             </section>
         </main>
     </div>
@@ -43,6 +48,7 @@
             const status = document.getElementById("session-status");
             const control = document.getElementById("session-control");
             const controlLabel = document.getElementById("control-label");
+            const stopControl = document.getElementById("stop-control");
             const sessionFocus = document.querySelector(".session-focus");
 
             const totalReadingTimeStorageKey = "readingTrackerTotalSeconds";
@@ -98,6 +104,7 @@
                 controlLabel.textContent = sessionFocus.dataset.pauseLabel;
                 control.setAttribute("aria-pressed", "true");
                 control.classList.add("is-running");
+                stopControl.disabled = false;
             }
 
 
@@ -111,6 +118,19 @@
                 control.classList.remove("is-running");
             }
 
+            function stopTimer() {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                elapsedSeconds = 0;
+                showTime();
+
+                status.textContent = sessionFocus.dataset.readyLabel;
+                controlLabel.textContent = sessionFocus.dataset.startLabel;
+                control.setAttribute("aria-pressed", "false");
+                control.classList.remove("is-running");
+                stopControl.disabled = true;
+            }
+
 
             control.addEventListener("click", function() {
                 if (timerInterval === null) {
@@ -119,6 +139,8 @@
                     pauseTimer();
                 }
             });
+
+            stopControl.addEventListener("click", stopTimer);
         </script>
 </body>
 </html>

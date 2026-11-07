@@ -32,6 +32,13 @@ body {
     outline-offset: 4px;
 }
 
+.session-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
 .session-focus {
     display: flex;
     flex: 1;
@@ -131,6 +138,22 @@ body {
 
 .session-control.is-running:hover {
     background: #e6edda;
+}
+
+.session-control--stop {
+    border-color: rgb(255 253 244 / 55%);
+    color: #fffdf4;
+    background: rgb(28 45 41 / 65%);
+}
+
+.session-control--stop:hover {
+    background: rgb(28 45 41 / 85%);
+}
+
+.session-control:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    transform: none;
 }
 
 .control-icon {
