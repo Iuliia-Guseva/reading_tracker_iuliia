@@ -22,7 +22,6 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/", "/login", "/signup", "/css/**", "/images/**", "/error").permitAll()
-                        .requestMatchers("/h2-console/**").denyAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")
