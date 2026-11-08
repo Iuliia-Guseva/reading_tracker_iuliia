@@ -15,8 +15,7 @@ public class Book {
     private Integer pages;
     private Integer rating;
     private boolean favorite;
-    // @Lob stores the cover as large binary data; byte[] holds the image's raw bytes.
-    @Lob
+    @Column(columnDefinition = "bytea")
     private byte[] coverImage;
     private String coverContentType;
     @Enumerated (EnumType.STRING)

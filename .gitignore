@@ -1,5 +1,7 @@
 HELP.md
 target/
+# .env - do not push my passwords anywhere
+.env
 /presentations/New Microsoft PowerPoint Presentation.pptx
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
